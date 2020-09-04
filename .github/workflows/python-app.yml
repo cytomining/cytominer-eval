@@ -32,6 +32,7 @@ jobs:
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Black check
+      if: runner.os == 'Linux'
       uses: jpetrucciani/black-check@19.10b0
     - name: Test with pytest
       run: |
