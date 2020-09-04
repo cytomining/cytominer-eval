@@ -15,7 +15,9 @@ tmpdir = tempfile.gettempdir()
 
 example_file = "SQ00015054_normalized_feature_select.csv.gz"
 example_file = pathlib.Path(
-    "{file}/../../example_data/compound/{eg}".format(file=os.path.dirname(__file__), eg=example_file)
+    "{file}/../../example_data/compound/{eg}".format(
+        file=os.path.dirname(__file__), eg=example_file
+    )
 )
 
 df = pd.read_csv(example_file)
