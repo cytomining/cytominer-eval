@@ -12,7 +12,7 @@ def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Da
         df = df.astype(col_fix)
     except ValueError:
         raise ValueError(
-            f"Columns cannot be converted to {col_fix}; check input features"
+            "Columns cannot be converted to {col}; check input features".format(col=col_fix)
         )
 
     return df

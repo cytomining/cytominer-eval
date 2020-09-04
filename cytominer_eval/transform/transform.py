@@ -12,7 +12,7 @@ def get_pairwise_metric(df: pd.DataFrame, metric: str) -> pd.DataFrame:
 
     assert (
         metric in available_pairwise_metrics
-    ), f"{metric} not supported. Available metrics: {available_pairwise_metrics}"
+    ), "{m} not supported. Available metrics: {avail}".format(m=metric, avail=available_pairwise_metrics)
 
     pair_df = df.transpose().corr(method=metric)
 
