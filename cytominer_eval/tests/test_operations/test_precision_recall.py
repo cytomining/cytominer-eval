@@ -57,4 +57,4 @@ def test_precision_recall():
         == "ITGAV"
     )
 
-    assert all(x in result.columns for x in repicate_groups)
+    assert all(x in result.columns for x in replicate_groups)
