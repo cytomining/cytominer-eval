@@ -34,3 +34,21 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
         assert all([ptypes.is_numeric_dtype(df[x]) for x in df.columns]), assert_error
 
     return df
+
+
+def set_pair_ids():
+    pair_a = "pair_a"
+    pair_b = "pair_b"
+
+    return_dict = {
+        "pair_a": {
+            "index": "{pair_a}_index".format(pair_a=pair_a),
+            "suffix": "_{pair_a}".format(pair_a=pair_a),
+        },
+        "pair_b": {
+            "index": "{pair_b}_index".format(pair_b=pair_b),
+            "suffix": "_{pair_b}".format(pair_b=pair_b),
+        },
+    }
+
+    return return_dict

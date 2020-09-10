@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assert_pandas_dtypes, get_upper_matrix
+from .util import assert_pandas_dtypes, get_upper_matrix, set_pair_ids
 
 available_pairwise_metrics = ["pearson", "kendall", "spearman"]
 
@@ -32,6 +32,9 @@ def process_melt(df: pd.DataFrame, meta_df: pd.DataFrame) -> pd.DataFrame:
 
     assert df.shape[0] == df.shape[1], "Matrix must be symmetrical"
 
+    # Get identifiers for pairing metadata
+    pair_ids = set_pair_ids()
+
     # Remove pairwise matrix diagonal and redundant pairwise comparisons
     upper_tri = get_upper_matrix(df)
     df = df.where(upper_tri)
@@ -42,22 +45,23 @@ def process_melt(df: pd.DataFrame, meta_df: pd.DataFrame) -> pd.DataFrame:
             df.reset_index(),
             id_vars="index",
             value_vars=df.columns,
-            var_name="pair_b_index",
+            var_name=pair_ids["pair_b"]["index"],
             value_name="metric",
         )
         .dropna()
         .reset_index(drop=True)
-        .rename({"index": "pair_a_index"}, axis="columns")
+        .rename({"index": pair_ids["pair_a"]["index"]}, axis="columns")
     )
 
     # Merge metadata on index for both comparison pairs
     output_df = meta_df.merge(
-        meta_df.merge(metric_unlabeled_df, left_index=True, right_on="pair_b_index"),
+        meta_df.merge(
+            metric_unlabeled_df, left_index=True, right_on=pair_ids["pair_b"]["index"],
+        ),
         left_index=True,
-        right_on="pair_a_index",
-        suffixes=["_pair_a", "_pair_b"],
+        right_on=pair_ids["pair_a"]["index"],
+        suffixes=[pair_ids["pair_a"]["suffix"], pair_ids["pair_b"]["suffix"]],
     )
-
     return output_df
 
 
