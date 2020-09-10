@@ -10,6 +10,7 @@ from cytominer_eval.transform.util import (
     get_upper_matrix,
     convert_pandas_dtypes,
     assert_pandas_dtypes,
+    set_pair_ids,
 )
 
 random.seed(123)
@@ -61,3 +62,15 @@ def test_assert_pandas_dtypes():
 
     output_df = convert_pandas_dtypes(output_df.loc[:, float_cols], col_fix=np.float64)
     assert all([ptypes.is_numeric_dtype(output_df[x]) for x in output_df.columns])
+
+
+def test_set_pair_ids():
+    pair_a = "pair_a"
+    pair_b = "pair_b"
+
+    result = set_pair_ids()
+
+    assert result[pair_a]["index"] == "{pair_a}_index".format(pair_a=pair_a)
+    assert result[pair_a]["index"] == "{pair_a}_index".format(pair_a=pair_a)
+    assert result[pair_b]["suffix"] == "_{pair_b}".format(pair_b=pair_b)
+    assert result[pair_b]["suffix"] == "_{pair_b}".format(pair_b=pair_b)
