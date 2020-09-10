@@ -26,7 +26,10 @@ meta_features = [x for x in df.columns if x.startswith("Metadata_")]
 features = df.drop(meta_features, axis="columns").columns.tolist()
 
 similarity_melted_df = metric_melt(
-    df=df, features=features, metadata_features=meta_features, metric="pearson"
+    df=df,
+    features=features,
+    metadata_features=meta_features,
+    similarity_metric="pearson",
 )
 
 
