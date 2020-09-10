@@ -36,6 +36,21 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     return df
 
 
+def assert_melt(df: pd.DataFrame, eval_metric: str = "percent_strong") -> None:
+    pair_ids = set_pair_ids()
+    df = df.loc[:, [pair_ids[x]["index"] for x in pair_ids]]
+    index_sums = df.sum().tolist()
+
+    assert_error = "Stop! The eval_metric provided in 'metric_melt()' is incorrect!"
+    assert_error = "{err} This is a fatal error providing incorrect results".format(
+        err=assert_error
+    )
+    if eval_metric == "percent_strong":
+        assert index_sums[0] != index_sums[1], assert_error
+    elif eval_metric == "precision_recall":
+        assert index_sums[0] == index_sums[1], assert_error
+
+
 def set_pair_ids():
     pair_a = "pair_a"
     pair_b = "pair_b"
