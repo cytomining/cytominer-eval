@@ -11,8 +11,11 @@ from cytominer_eval.operations.util import assign_replicates
 from cytominer_eval.transform.util import assert_melt
 
 
+example_file = "SQ00014610_normalized_feature_select.csv.gz"
 example_file = pathlib.Path(
-    f"cytominer_eval/example_data/gene/SQ00014610_normalized_feature_select.csv.gz"
+    "{file}/../../example_data/gene/{eg}".format(
+        file=os.path.dirname(__file__), eg=example_file
+    )
 )
 
 df = pd.read_csv(example_file)
