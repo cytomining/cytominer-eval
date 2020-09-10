@@ -61,7 +61,8 @@ def process_melt(df: pd.DataFrame, meta_df: pd.DataFrame) -> pd.DataFrame:
         left_index=True,
         right_on=pair_ids["pair_a"]["index"],
         suffixes=[pair_ids["pair_a"]["suffix"], pair_ids["pair_b"]["suffix"]],
-    )
+    ).reset_index(drop=True)
+
     return output_df
 
 
