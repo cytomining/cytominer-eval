@@ -55,3 +55,24 @@ def assign_replicates(
         compare_df, left_index=True, right_index=True
     )
     return similarity_melted_df
+
+
+def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> List:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    assert (
+        "group_replicate" in replicate_group_df.columns
+    ), "'group_replicate' not found in dataframe; remember to call assign_replicates()."
+
+    recall_denom__total_relevant_items = sum(replicate_group_df.group_replicate)
+    precision_denom__num_recommended_items = k
+
+    num_recommended_items_at_k = sum(replicate_group_df.iloc[:k,].group_replicate)
+
+    precision_at_k = num_recommended_items_at_k / precision_denom__num_recommended_items
+    recall_at_k = num_recommended_items_at_k / recall_denom__total_relevant_items
+
+    return_bundle = {"k": k, "precision": precision_at_k, "recall": recall_at_k}
+
+    return pd.Series(return_bundle)

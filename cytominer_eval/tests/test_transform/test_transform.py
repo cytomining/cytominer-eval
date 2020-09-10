@@ -31,19 +31,19 @@ sample_a = feature_df.iloc[0,].values
 sample_b = feature_df.iloc[1,].values
 example_sample_corr = np.corrcoef(sample_a, sample_b)[0, 1]
 
-pairwise_metric_df = get_pairwise_metric(feature_df, metric="pearson")
+pairwise_metric_df = get_pairwise_metric(feature_df, similarity_metric="pearson")
 
 
 def test_get_pairwise_metric():
     with pytest.raises(ValueError) as ve:
-        output = get_pairwise_metric(df, metric="pearson")
+        output = get_pairwise_metric(df, similarity_metric="pearson")
     assert "check input features" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
-        output = get_pairwise_metric(feature_df, metric="not supported")
+        output = get_pairwise_metric(feature_df, similarity_metric="not supported")
     assert "not supported not supported" in str(ve.value)
 
-    result_df = get_pairwise_metric(feature_df, metric="pearson")
+    result_df = get_pairwise_metric(feature_df, similarity_metric="pearson")
 
     assert np.diagonal(result_df).sum() == df.shape[0]
 
@@ -56,13 +56,13 @@ def test_process_melt():
     assert "Matrix must be symmetrical" in str(ve.value)
 
     melted_df = process_melt(df=pairwise_metric_df, meta_df=meta_df)
-    assert round(melted_df.metric[0], 3) == round(example_sample_corr, 3)
+    assert round(melted_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
     assert melted_df.shape[0] == 73536
 
 
 def test_metric_melt():
-    result_df = metric_melt(df, features, meta_features, metric="pearson")
-    assert round(result_df.metric[0], 3) == round(example_sample_corr, 3)
+    result_df = metric_melt(df, features, meta_features, similarity_metric="pearson")
+    assert round(result_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
     assert result_df.shape[0] == 73536
 
     # The index ID is extremely important for aligning the dataframe
@@ -70,7 +70,30 @@ def test_metric_melt():
     same_index_copy = df.copy()
     same_index_copy.index = [3] * same_index_copy.shape[0]
 
-    result_df = metric_melt(same_index_copy, features, meta_features, metric="pearson")
+    result_df = metric_melt(
+        same_index_copy, features, meta_features, similarity_metric="pearson"
+    )
 
-    assert round(result_df.metric[0], 3) == round(example_sample_corr, 3)
+    assert round(result_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
     assert result_df.shape[0] == 73536
+
+    with pytest.raises(AssertionError) as ve:
+        output = metric_melt(
+            df,
+            features,
+            meta_features,
+            similarity_metric="pearson",
+            eval_metric="NOT SUPPORTED",
+        )
+    assert "not supported. Available evaluation metrics:" in str(ve.value)
+
+    result_df = metric_melt(
+        same_index_copy,
+        features,
+        meta_features,
+        similarity_metric="pearson",
+        eval_metric="precision_recall",
+    )
+
+    assert round(result_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
+    assert result_df.shape[0] == 147072

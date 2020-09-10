@@ -11,6 +11,7 @@ from cytominer_eval.transform.util import (
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
+    assert_melt,
 )
 
 random.seed(123)
