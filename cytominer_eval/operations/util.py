@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from typing import List
 
+from sklearn.preprocessing import StandardScaler
+
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.transform.util import set_pair_ids
 
@@ -57,7 +59,7 @@ def assign_replicates(
     return similarity_melted_df
 
 
-def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> List:
+def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> pd.Series:
     """
     Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
     """
@@ -76,3 +78,56 @@ def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> List
     return_bundle = {"k": k, "precision": precision_at_k, "recall": recall_at_k}
 
     return pd.Series(return_bundle)
+
+
+def calculate_grit(
+    replicate_group_df: pd.DataFrame, control_perts: List[str], column_id_info: dict
+) -> pd.Series:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    group_entry = get_grit_entry(replicate_group_df, column_id_info["group"]["id"])
+    pert = get_grit_entry(replicate_group_df, column_id_info["replicate"]["id"])
+
+    # Define distributions for control perturbations
+    control_distrib = replicate_group_df.loc[
+        replicate_group_df.loc[:, column_id_info["replicate"]["comparison"]].isin(
+            control_perts
+        ),
+        "similarity_metric",
+    ].values.reshape(-1, 1)
+
+    assert len(control_distrib) > 1, "Error! No control perturbations found."
+
+    # Define distributions for same group (but not same perturbation)
+    same_group_distrib = replicate_group_df.loc[
+        (
+            replicate_group_df.loc[:, column_id_info["group"]["comparison"]]
+            == group_entry
+        )
+        & (
+            replicate_group_df.loc[:, column_id_info["replicate"]["comparison"]] != pert
+        ),
+        "similarity_metric",
+    ].values.reshape(-1, 1)
+
+    if len(same_group_distrib) == 0:
+        return_bundle = {"perturbation": pert, "group": group_entry, "grit": np.nan}
+
+    else:
+        scaler = StandardScaler()
+        scaler.fit(control_distrib)
+        grit_z_scores = scaler.transform(same_group_distrib)
+        grit = np.mean(grit_z_scores)
+
+        return_bundle = {"perturbation": pert, "group": group_entry, "grit": grit}
+
+    return pd.Series(return_bundle)
+
+
+def get_grit_entry(df: pd.DataFrame, col: str) -> str:
+    entries = df.loc[:, col]
+    assert (
+        len(entries.unique()) == 1
+    ), "grit is calculated for each perturbation independently"
+    return str(list(entries)[0])

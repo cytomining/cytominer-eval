@@ -11,6 +11,7 @@ from cytominer_eval.transform.util import (
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
+    set_grit_column_info,
     assert_melt,
 )
 
@@ -75,3 +76,15 @@ def test_set_pair_ids():
     assert result[pair_a]["index"] == "{pair_a}_index".format(pair_a=pair_a)
     assert result[pair_b]["suffix"] == "_{pair_b}".format(pair_b=pair_b)
     assert result[pair_b]["suffix"] == "_{pair_b}".format(pair_b=pair_b)
+
+
+def test_set_grit_column_info():
+    replicate_id = "test_replicate"
+    group_id = "test_group"
+
+    result = set_grit_column_info(replicate_id=replicate_id, group_id=group_id)
+
+    assert result["replicate"]["id"] == "{rep}_pair_a".format(rep=replicate_id)
+    assert result["replicate"]["comparison"] == "{rep}_pair_b".format(rep=replicate_id)
+    assert result["group"]["id"] == "{group}_pair_a".format(group=group_id)
+    assert result["group"]["comparison"] == "{group}_pair_b".format(group=group_id)
