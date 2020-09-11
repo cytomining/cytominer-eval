@@ -87,13 +87,14 @@ def test_metric_melt():
         )
     assert "not supported. Available evaluation metrics:" in str(ve.value)
 
-    result_df = metric_melt(
-        same_index_copy,
-        features,
-        meta_features,
-        similarity_metric="pearson",
-        eval_metric="precision_recall",
-    )
+    for full_metric_required in ["precision_recall", "grit"]:
+        result_df = metric_melt(
+            same_index_copy,
+            features,
+            meta_features,
+            similarity_metric="pearson",
+            eval_metric=full_metric_required,
+        )
 
-    assert round(result_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
-    assert result_df.shape[0] == 147072
+        assert round(result_df.similarity_metric[0], 3) == round(example_sample_corr, 3)
+        assert result_df.shape[0] == 147072
