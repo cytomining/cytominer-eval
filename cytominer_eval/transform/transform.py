@@ -5,7 +5,7 @@ from typing import List
 from .util import assert_pandas_dtypes, get_upper_matrix, set_pair_ids
 
 available_pairwise_similarity_metrics = ["pearson", "kendall", "spearman"]
-available_evaluation_metrics = ["percent_strong", "precision_recall"]
+available_evaluation_metrics = ["percent_strong", "precision_recall", "grit"]
 
 
 def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFrame:
