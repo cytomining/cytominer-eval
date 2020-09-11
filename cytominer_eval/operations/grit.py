@@ -1,10 +1,10 @@
 """
 Functions to calculate grit
 
-Grit describes the phenotype strength of guide perturbations along two distinct axes:
+Grit describes the phenotype strength of replicate perturbations along two distinct axes:
 
-- Similarity to other guides that target the same gene
-- Similarity to non-targeting control guides
+- Similarity to other perturbations that target the same larger group (e.g. gene, MOA)
+- Similarity to control perturbations
 """
 
 import numpy as np
