@@ -49,6 +49,8 @@ def assert_melt(df: pd.DataFrame, eval_metric: str = "percent_strong") -> None:
         assert index_sums[0] != index_sums[1], assert_error
     elif eval_metric == "precision_recall":
         assert index_sums[0] == index_sums[1], assert_error
+    elif eval_metric == "grit":
+        assert index_sums[0] == index_sums[1], assert_error
 
 
 def set_pair_ids():
@@ -67,3 +69,28 @@ def set_pair_ids():
     }
 
     return return_dict
+
+
+def set_grit_column_info(replicate_id: str, group_id: str) -> dict:
+    """
+    In calculating grit, the data must have a metadata feature describing the core
+    replicate perturbation (replicate_id) and a separate metadata feature describing
+    the larger group (group_id) that the perturbation belongs to (e.g. gene, MOA)
+    """
+    pair_ids = set_pair_ids()
+
+    replicate_id_with_suffix = [
+        "{col}{suf}".format(col=replicate_id, suf=pair_ids[x]["suffix"])
+        for x in pair_ids
+    ]
+
+    group_id_with_suffix = [
+        "{col}{suf}".format(col=group_id, suf=pair_ids[x]["suffix"]) for x in pair_ids
+    ]
+
+    col_info = ["id", "comparison"]
+    replicate_id_info = dict(zip(col_info, replicate_id_with_suffix))
+    group_id_info = dict(zip(col_info, group_id_with_suffix))
+
+    column_id_info = {"replicate": replicate_id_info, "group": group_id_info}
+    return column_id_info

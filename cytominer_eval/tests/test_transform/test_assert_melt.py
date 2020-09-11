@@ -29,7 +29,7 @@ replicate_groups = ["Metadata_gene_name", "Metadata_cell_line"]
 
 
 def test_assert_melt():
-    for metric in ["precision_recall", "percent_strong"]:
+    for metric in ["precision_recall", "percent_strong", "grit"]:
         result = metric_melt(
             df=df,
             features=features,
@@ -44,10 +44,14 @@ def test_assert_melt():
 
         assert_melt(result, eval_metric=metric)
 
+        # Note, not all alternative dummy metrics are provided, since many require
+        # the same melted dataframe
         if metric == "precision_recall":
             dummy_metrics = ["percent_strong"]
         elif metric == "percent_strong":
-            dummy_metrics = ["precision_recall"]
+            dummy_metrics = ["precision_recall", "grit"]
+        elif metric == "grit":
+            dummy_metrics = ["percent_strong"]
 
         for dummy_metric in dummy_metrics:
             with pytest.raises(AssertionError) as ve:
