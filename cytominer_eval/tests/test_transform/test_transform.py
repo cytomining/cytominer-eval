@@ -87,6 +87,18 @@ def test_metric_melt():
         )
     assert "not supported. Available evaluation metrics:" in str(ve.value)
 
+    with pytest.raises(AssertionError) as ve:
+        output = metric_melt(
+            df, features + ["NOT SUPPORTED"], meta_features, similarity_metric="pearson"
+        )
+    assert "Profile feature not found" in str(ve.value)
+
+    with pytest.raises(AssertionError) as ve:
+        output = metric_melt(
+            df, features, meta_features + ["NOT SUPPORTED"], similarity_metric="pearson"
+        )
+    assert "Metadata feature not found" in str(ve.value)
+
     for full_metric_required in ["precision_recall", "grit"]:
         result_df = metric_melt(
             same_index_copy,
