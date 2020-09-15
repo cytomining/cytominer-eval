@@ -2,10 +2,16 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assert_pandas_dtypes, get_upper_matrix, set_pair_ids
+from .util import (
+    assert_pandas_dtypes,
+    get_upper_matrix,
+    set_pair_ids,
+    get_available_eval_metrics,
+    get_available_similarity_metrics,
+)
 
-available_pairwise_similarity_metrics = ["pearson", "kendall", "spearman"]
-available_evaluation_metrics = ["percent_strong", "precision_recall", "grit"]
+available_pairwise_similarity_metrics = get_available_similarity_metrics()
+available_evaluation_metrics = get_available_eval_metrics()
 
 
 def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFrame:
@@ -89,6 +95,12 @@ def metric_melt(
 ) -> pd.DataFrame:
     # Subset dataframes to specific features
     df = df.reset_index(drop=True)
+
+    assert all(
+        [x in df.columns for x in metadata_features]
+    ), "Metadata feature not found"
+    assert all([x in df.columns for x in features]), "Profile feature not found"
+
     meta_df = df.loc[:, metadata_features]
     df = df.loc[:, features]
 

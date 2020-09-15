@@ -1,7 +1,16 @@
 import numpy as np
 import pandas as pd
+from typing import List, Union
 import pandas.api.types as ptypes
 from collections import OrderedDict
+
+
+def get_available_eval_metrics():
+    return ["percent_strong", "precision_recall", "grit"]
+
+
+def get_available_similarity_metrics():
+    return ["pearson", "kendall", "spearman"]
 
 
 def get_upper_matrix(df: pd.DataFrame) -> np.array:
@@ -37,7 +46,20 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     return df
 
 
+def assert_eval_metric(eval_metric: str):
+    avail_metrics = get_available_eval_metrics()
+
+    assert (
+        eval_metric in avail_metrics
+    ), "{eval} not supported. Select one of {avail}".format(
+        eval=eval_metric, avail=avail_metrics
+    )
+
+
 def assert_melt(df: pd.DataFrame, eval_metric: str = "percent_strong") -> None:
+
+    assert_eval_metric(eval_metric=eval_metric)
+
     pair_ids = set_pair_ids()
     df = df.loc[:, [pair_ids[x]["index"] for x in pair_ids]]
     index_sums = df.sum().tolist()
@@ -69,6 +91,32 @@ def set_pair_ids():
     }
 
     return return_dict
+
+
+def check_replicate_groups(
+    eval_metric: str, replicate_groups: Union[List[str], dict]
+) -> str:
+
+    assert_eval_metric(eval_metric=eval_metric)
+
+    if eval_metric != "grit":
+        assert isinstance(
+            replicate_groups, list
+        ), "Replicate groups must be a list for the {op} operation".format(
+            op=eval_metric
+        )
+    else:
+        assert isinstance(
+            replicate_groups, dict
+        ), "For grit, replicate_groups must be a dict"
+
+        replicate_key_ids = ["replicate_id", "group_id"]
+
+        assert all(
+            [x in replicate_groups for x in replicate_key_ids]
+        ), "replicate_groups for grit not formed properly. Must contain {id}".format(
+            id=replicate_key_ids
+        )
 
 
 def set_grit_column_info(replicate_id: str, group_id: str) -> dict:

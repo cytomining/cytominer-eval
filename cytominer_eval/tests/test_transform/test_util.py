@@ -7,12 +7,16 @@ import pandas as pd
 import pandas.api.types as ptypes
 
 from cytominer_eval.transform.util import (
+    get_available_eval_metrics,
+    get_available_similarity_metrics,
     get_upper_matrix,
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
     set_grit_column_info,
+    assert_eval_metric,
     assert_melt,
+    check_replicate_groups,
 )
 
 random.seed(123)
@@ -27,6 +31,22 @@ data_df = pd.DataFrame(
     }
 )
 float_cols = ["float_a", "float_b"]
+
+
+def test_get_available_eval_metrics():
+    expected_result = ["percent_strong", "precision_recall", "grit"]
+    assert expected_result == get_available_eval_metrics()
+
+
+def test_get_available_similarity_metrics():
+    expected_result = ["pearson", "kendall", "spearman"]
+    assert expected_result == get_available_similarity_metrics()
+
+
+def test_assert_eval_metric():
+    with pytest.raises(AssertionError) as ae:
+        output = assert_eval_metric(eval_metric="NOT SUPPORTED")
+    assert "ot supported. Select one of" in str(ae.value)
 
 
 def test_get_upper_matrix():
@@ -88,3 +108,38 @@ def test_set_grit_column_info():
     assert result["replicate"]["comparison"] == "{rep}_pair_b".format(rep=replicate_id)
     assert result["group"]["id"] == "{group}_pair_a".format(group=group_id)
     assert result["group"]["comparison"] == "{group}_pair_b".format(group=group_id)
+
+
+def test_check_replicate_groups():
+    available_metrics = get_available_eval_metrics()
+
+    replicate_groups = ["Metadata_gene_name", "Metadata_pert_name"]
+    replicate_group_dict = {"replicate_id": "testingA", "group_id": "testingB"}
+    for operation in available_metrics:
+        if operation != "grit":
+            check_replicate_groups(
+                eval_metric=operation, replicate_groups=replicate_groups
+            )
+            with pytest.raises(AssertionError) as ae:
+                output = check_replicate_groups(
+                    eval_metric=operation, replicate_groups=replicate_group_dict
+                )
+            assert "Replicate groups must be a list for the {op} operation".format(
+                op=operation
+            ) in str(ae.value)
+        else:
+            check_replicate_groups(
+                eval_metric=operation, replicate_groups=replicate_group_dict
+            )
+            with pytest.raises(AssertionError) as ae:
+                output = check_replicate_groups(
+                    eval_metric=operation, replicate_groups=replicate_groups
+                )
+            assert "For grit, replicate_groups must be a dict" in str(ae.value)
+
+    with pytest.raises(AssertionError) as ae:
+        wrong_group_dict = {"MISSING": "nothing here", "MISSING_TOO": "nothing"}
+        output = check_replicate_groups(
+            eval_metric="grit", replicate_groups=wrong_group_dict
+        )
+    assert "replicate_groups for grit not formed properly." in str(ae.value)
