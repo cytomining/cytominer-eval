@@ -140,3 +140,78 @@ def test_evaluate_precision_recall():
             result.query("recall == 1").shape[0]
             == expected_result["compound"]["recall"][str(k)]
         )
+
+
+def test_evaluate_grit():
+    grit_gene_control_perts = [
+        "Chr2-1",
+        "Chr2-2",
+        "Chr2-3",
+        "Chr2-4",
+        "Chr2-5",
+        "Chr2-6",
+        "Luc-1",
+        "Luc-2",
+        "LacZ-2",
+        "LacZ-3",
+    ]
+
+    grit_gene_replicate_groups = {
+        "replicate_id": "Metadata_pert_name",
+        "group_id": "Metadata_gene_name",
+    }
+
+    grit_results_df = evaluate(
+        profiles=gene_profiles,
+        features=gene_features,
+        meta_features=gene_meta_features,
+        replicate_groups=grit_gene_replicate_groups,
+        operation="grit",
+        grit_control_perts=grit_gene_control_perts,
+    )
+
+    top_result = (
+        grit_results_df.sort_values(by="grit", ascending=False)
+        .reset_index(drop=True)
+        .iloc[0,]
+    )
+    assert np.round(top_result.grit, 4) == 2.2597
+    assert top_result.group == "PTK2"
+    assert top_result.perturbation == "PTK2-2"
+
+    grit_compound_replicate_groups = {
+        "replicate_id": "Metadata_broad_sample",
+        "group_id": "Metadata_moa",
+    }
+
+    grit_compound_control_perts = ["DMSO"]
+
+    grit_results_df = evaluate(
+        profiles=compound_profiles,
+        features=compound_features,
+        meta_features=compound_meta_features,
+        replicate_groups=grit_compound_replicate_groups,
+        operation="grit",
+        grit_control_perts=grit_compound_control_perts,
+    )
+
+    top_result = (
+        grit_results_df.sort_values(by="grit", ascending=False)
+        .reset_index(drop=True)
+        .iloc[0,]
+    )
+
+    assert np.round(top_result.grit, 4) == 0.9990
+    assert top_result.group == "ATPase inhibitor"
+    assert top_result.perturbation == "BRD-A94756469-001-04-7"
+
+    with pytest.raises(AssertionError) as ae:
+        grit_results_df = evaluate(
+            profiles=compound_profiles,
+            features=compound_features,
+            meta_features=compound_meta_features,
+            replicate_groups=compound_groups,
+            operation="grit",
+            grit_control_perts=grit_compound_control_perts,
+        )
+    assert "For grit, replicate_groups must be a dict" in str(ae.value)

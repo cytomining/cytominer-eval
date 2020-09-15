@@ -21,7 +21,7 @@ def evaluate(
     similarity_metric: str = "pearson",
     percent_strong_quantile: np.float = 0.95,
     precision_recall_k: int = 10,
-    control_perts_grit: List[str] = ["None"],
+    grit_control_perts: List[str] = ["None"],
 ):
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -51,7 +51,7 @@ def evaluate(
     elif operation == "grit":
         metric_result = grit(
             similarity_melted_df=similarity_melted_df,
-            control_perts=control_perts_grit,
+            control_perts=grit_control_perts,
             replicate_id=replicate_groups["replicate_id"],
             group_id=replicate_groups["group_id"],
         )
