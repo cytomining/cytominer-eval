@@ -43,8 +43,9 @@ def percent_strong(
     replicate_df = similarity_melted_df.query("group_replicate")
     denom = replicate_df.shape[0]
 
-    ### HYT's addition, though i dont know if this will work
-    assert denom != 0, "no replicate groups identified in {rep} columns!".format(rep=replicate_groups)
+    assert denom != 0, "no replicate groups identified in {rep} columns!".format(
+        rep=replicate_groups
+    )
 
     non_replicate_quantile = similarity_melted_df.query(
         "not group_replicate"
