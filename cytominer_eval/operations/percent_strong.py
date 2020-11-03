@@ -39,12 +39,12 @@ def percent_strong(
     # Check to make sure that the melted dataframe is upper triangle
     assert_melt(similarity_melted_df, eval_metric="percent_strong")
 
-    # check that there ARE group_replicates (non-unique rows)
+    # check that there are group_replicates (non-unique rows)
     replicate_df = similarity_melted_df.query("group_replicate")
     denom = replicate_df.shape[0]
 
     ### HYT's addition, though i dont know if this will work
-    assert denom != 0, "no replicate groups identified!"
+    assert denom != 0, "no replicate groups identified in {rep} columns!".format(rep=replicate_groups)
 
     non_replicate_quantile = similarity_melted_df.query(
         "not group_replicate"
