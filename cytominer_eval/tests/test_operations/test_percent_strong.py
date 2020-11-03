@@ -66,13 +66,3 @@ def test_percent_strong_uniquerows():
     assert "no replicate groups identified in {rep} columns!".format(
         rep=replicate_groups
     ) in str(err.value)
-
-    ### REFERENCE CODE
-    # with pytest.raises(AssertionError) as ve:
-    # replicate_groups = ["MISSING_COLUMN"]
-    # result = percent_strong(
-    #     similarity_melted_df=similarity_melted_df,
-    #     replicate_groups=replicate_groups,
-    #     quantile=0.95,
-    # )
-    # assert "replicate_group not found in melted dataframe columns" in str(ve.value)
