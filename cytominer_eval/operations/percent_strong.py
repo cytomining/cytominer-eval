@@ -29,6 +29,7 @@ def percent_strong(
     A metric describing the proportion of replicates that correlate above the given
     quantile of non-replicate correlation distribution
     """
+
     assert 0 < quantile and 1 >= quantile, "quantile must be between 0 and 1"
 
     similarity_melted_df = assign_replicates(
@@ -38,12 +39,17 @@ def percent_strong(
     # Check to make sure that the melted dataframe is upper triangle
     assert_melt(similarity_melted_df, eval_metric="percent_strong")
 
+    # check that there are group_replicates (non-unique rows)
+    replicate_df = similarity_melted_df.query("group_replicate")
+    denom = replicate_df.shape[0]
+
+    assert denom != 0, "no replicate groups identified in {rep} columns!".format(
+        rep=replicate_groups
+    )
+
     non_replicate_quantile = similarity_melted_df.query(
         "not group_replicate"
     ).similarity_metric.quantile(quantile)
-
-    replicate_df = similarity_melted_df.query("group_replicate")
-    denom = replicate_df.shape[0]
 
     percent_strong = (
         replicate_df.similarity_metric > non_replicate_quantile
