@@ -3,6 +3,8 @@ import pandas as pd
 from typing import List
 
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.covariance import EmpiricalCovariance
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.transform.util import set_pair_ids
@@ -131,3 +133,28 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
         len(entries.unique()) == 1
     ), "grit is calculated for each perturbation independently"
     return str(list(entries)[0])
+
+class DistributionEstimator:
+    def __init__(self, arr):
+        self.mu = np.array(np.mean(arr, axis = 0))
+        self.sigma = EmpiricalCovariance().fit(arr)
+        
+    def mahalanobis(self, X):
+        return(self.sigma.mahalanobis(X - self.mu))
+
+            
+def calculate_mahalanobis(
+    pert_df: pd.DataFrame, control_df: pd.DataFrame
+    ) -> pd.Series:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    assert len(control_df) > 1, "Error! No control perturbations found."
+        
+    # Get dispersion and center estimators for the 
+    control_estimators = DistributionEstimator(control_df)
+    
+    # Distance between mean of perturbation and control
+    maha = control_estimators.mahalanobis(
+                np.array(np.mean(pert_df, 0)).reshape(1, -1))[0]
+    return maha
