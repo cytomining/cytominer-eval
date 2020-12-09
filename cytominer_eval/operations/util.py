@@ -134,6 +134,7 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
     ), "grit is calculated for each perturbation independently"
     return str(list(entries)[0])
 
+
 class DistributionEstimator:
     def __init__(self, arr):
         self.mu = np.array(np.mean(arr, axis = 0))
@@ -142,7 +143,7 @@ class DistributionEstimator:
     def mahalanobis(self, X):
         return(self.sigma.mahalanobis(X - self.mu))
 
-            
+
 def calculate_mahalanobis(
     pert_df: pd.DataFrame, control_df: pd.DataFrame
     ) -> pd.Series:
@@ -158,3 +159,62 @@ def calculate_mahalanobis(
     maha = control_estimators.mahalanobis(
                 np.array(np.mean(pert_df, 0)).reshape(1, -1))[0]
     return maha
+
+
+def default_mp_value_parameters():    
+    params = {"rescale_pca": True,
+              "nb_permutations": 100}
+    return(params)
+    
+    
+def calculate_mp_value(
+    pert_df: pd.DataFrame, control_df: pd.DataFrame,
+    params = {}
+    ) -> pd.Series:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    assert len(control_df) > 1, "Error! No control perturbations found."
+    
+    # Assign parameters
+    p = default_mp_value_parameters()
+    assert (
+        all([x in p.keys() for x in params.keys()])
+    ), "Unknown parameters provided." 
+    for (k,v) in params.items():
+        p[k] = v
+    
+    merge_df = pert_df.append(control_df)
+    
+    # We reduce the dimensionality with PCA
+    # so that 90% of the variance is conserved
+    pca = PCA(n_components = 0.9, svd_solver = 'full')
+    pca_array = pca.fit_transform(merge_df)
+    # We scale columns by the variance explained
+    if p["rescale_pca"]:
+        pca_array = pca_array * pca.explained_variance_ratio_
+    # NB: this seems useless, as the point of using the Mahalanobis
+    # distance instead of the Euclidean distance is to be independent
+    # of axes scales
+    
+    # Get dispersion and center estimators for the 
+    control_estimators = DistributionEstimator(pca_array[-control_df.shape[0]:])
+    
+    # Distance between mean of perturbation and control
+    obs = calculate_mahalanobis(pert_df = pca_array[:pert_df.shape[0]],
+                                control_df = pca_array[-control_df.shape[0]:])
+    # NB: in the paper's methods section it mentions the covariance used
+    # might be modified to include variation of the perturbation as well.
+    
+    # Permutation test
+    sim = np.zeros(p["nb_permutations"])
+    pert_mask = np.zeros(pca_array.shape[0], dtype=bool)
+    pert_mask[:pert_df.shape[0]] = 1
+    for i in range(p["nb_permutations"]):
+        pert_mask_perm = np.random.permutation(pert_mask)
+        pert_perm = pca_array[pert_mask_perm]
+        control_perm = pca_array[np.logical_not(pert_mask_perm)]
+        sim[i] = calculate_mahalanobis(pert_df = pert_perm,
+                                       control_df = control_perm)
+        
+    return np.mean([x >= obs for x in sim])
