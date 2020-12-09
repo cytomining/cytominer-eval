@@ -137,11 +137,10 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
 
 class DistributionEstimator:
     def __init__(self, arr):
-        self.mu = np.array(np.mean(arr, axis = 0))
         self.sigma = EmpiricalCovariance().fit(arr)
         
     def mahalanobis(self, X):
-        return(self.sigma.mahalanobis(X - self.mu))
+        return(self.sigma.mahalanobis(X))
 
 
 def calculate_mahalanobis(
