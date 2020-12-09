@@ -5,7 +5,10 @@ import tempfile
 import numpy as np
 import pandas as pd
 from cytominer_eval.operations import mp_value
-from cytominer_eval.operations.util import calculate_mp_value
+from cytominer_eval.operations.util import (
+    calculate_mp_value, 
+    calculate_mahalanobis
+)
 
 # Load CRISPR dataset
 example_file = "SQ00014610_normalized_feature_select.csv.gz"
