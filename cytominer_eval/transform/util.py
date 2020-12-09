@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 
 def get_available_eval_metrics():
-    return ["percent_strong", "precision_recall", "grit"]
+    return ["percent_strong", "precision_recall", "grit", "mp_value"]
 
 
 def get_available_similarity_metrics():
@@ -99,13 +99,7 @@ def check_replicate_groups(
 
     assert_eval_metric(eval_metric=eval_metric)
 
-    if eval_metric != "grit":
-        assert isinstance(
-            replicate_groups, list
-        ), "Replicate groups must be a list for the {op} operation".format(
-            op=eval_metric
-        )
-    else:
+    if eval_metric == "grit":
         assert isinstance(
             replicate_groups, dict
         ), "For grit, replicate_groups must be a dict"
@@ -116,6 +110,16 @@ def check_replicate_groups(
             [x in replicate_groups for x in replicate_key_ids]
         ), "replicate_groups for grit not formed properly. Must contain {id}".format(
             id=replicate_key_ids
+        )
+    elif eval_metric == "mp_value":
+        assert isinstance(
+            replicate_groups, str
+        ), "For mp_value, replicate_groups must be a single string."
+    else:
+        assert isinstance(
+            replicate_groups, list
+        ), "Replicate groups must be a list for the {op} operation".format(
+            op=eval_metric
         )
 
 
