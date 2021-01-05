@@ -198,7 +198,7 @@ def calculate_mp_value(
     p = default_mp_value_parameters()
     assert (
         all([x in p.keys() for x in params.keys()])
-    ), "Unknown parameters provided." 
+    ), "Unknown parameters provided. Only {e} are supported.".format(e=p.keys()) 
     for (k,v) in params.items():
         p[k] = v
     
