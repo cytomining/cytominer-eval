@@ -163,7 +163,7 @@ def calculate_mahalanobis(
 def default_mp_value_parameters():    
     params = {"rescale_pca": True,
               "nb_permutations": 100}
-    return(params)
+    return params
     
     
 def calculate_mp_value(
@@ -183,7 +183,7 @@ def calculate_mp_value(
     for (k,v) in params.items():
         p[k] = v
     
-    merge_df = pert_df.append(control_df)
+    merge_df = pd.concat([pert_df, control_df], axis="columns").reset_index(drop=True)
     
     # We reduce the dimensionality with PCA
     # so that 90% of the variance is conserved

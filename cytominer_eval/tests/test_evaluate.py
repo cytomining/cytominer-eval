@@ -262,7 +262,6 @@ def test_evaluate_mp_value():
 
     # Tests on chemical screen dataset
     mp_value_compound_control_perts = ["DMSO"]
-
     mp_value_compound_replicate_groups = "Metadata_broad_sample"
 
     mp_value_results_df = evaluate(
