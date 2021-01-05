@@ -23,10 +23,13 @@ def mp_value(
     See DOI: 10.1177/1087057112469257
 
     Arguments:
-    similarity_melted_df - a long pandas dataframe output from transform.metric_melt
+    df - a pandas dataframe with measurements on each row and features or metadata in
+         each column
     control_perts - a list of control perturbations against which the distances will be
                     computed
     replicate_id - the metadata identifier marking which column tracks replicate perts
+    features - columns containing numerical features to be used for the mp-value
+               computation
 
     Output:
     A dataframe of mp-values per perturbation.

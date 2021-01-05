@@ -136,10 +136,21 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
 
 
 class DistributionEstimator:
+    """
+    Store location and dispersion estimators of the
+    empirical distribution of data provided in an
+    array and allow computation of statistical 
+    distances 
+    """
     def __init__(self, arr):
         self.sigma = EmpiricalCovariance().fit(arr)
         
     def mahalanobis(self, X):
+        """
+        Compute the mahalanobis distance between
+        the empirical distribution described by
+        this object and points in an array `X` 
+        """
         return(self.sigma.mahalanobis(X))
 
 
@@ -151,7 +162,7 @@ def calculate_mahalanobis(
     """
     assert len(control_df) > 1, "Error! No control perturbations found."
         
-    # Get dispersion and center estimators for the 
+    # Get dispersion and center estimators for the control perturbations
     control_estimators = DistributionEstimator(control_df)
     
     # Distance between mean of perturbation and control
@@ -161,6 +172,14 @@ def calculate_mahalanobis(
 
 
 def default_mp_value_parameters():    
+    """
+    Set the different default parameters used for mp-values.
+
+    Output:
+    A dictionary with the following keys:
+    rescale_pca - whether the PCA should be scaled by variance explained
+    nb_permutations - how many permutations to do to get empirical p-value
+    """
     params = {"rescale_pca": True,
               "nb_permutations": 100}
     return params
@@ -196,7 +215,7 @@ def calculate_mp_value(
     # distance instead of the Euclidean distance is to be independent
     # of axes scales
     
-    # Get dispersion and center estimators for the 
+    # Get dispersion and center estimators for the control perturbations
     control_estimators = DistributionEstimator(pca_array[-control_df.shape[0]:])
     
     # Distance between mean of perturbation and control
