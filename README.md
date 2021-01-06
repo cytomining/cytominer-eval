@@ -4,7 +4,7 @@
 [![Coverage Status](https://codecov.io/gh/cytomining/cytominer-eval/branch/master/graph/badge.svg)](https://codecov.io/github/cytomining/cytominer-eval?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Cytominer-eval is contains functions to calculate quality metrics for perturbation profiling experiments.
+Cytominer-eval contains functions to calculate quality metrics for perturbation profiling experiments.
 
 ## Installation
 
