@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
+from math import isclose
 from cytominer_eval.operations import mp_value
 from cytominer_eval.operations.util import calculate_mp_value, calculate_mahalanobis
 
@@ -38,12 +39,12 @@ def test_calculate_mahalanobis():
     # NB: the following value is empirically determined
     # and not theoretically justified but avoids unwanted
     # changes in the implementation of the Mahalanobis distance
-    assert maha == 3.62523778789282
+    assert isclose(maha, 3.62523778789, abs_tol=1e-09)
 
     maha = calculate_mahalanobis(pert_df=control_df, control_df=control_df)
 
     # Distance to itself should be approximately zero
-    assert abs(maha) < 1e-5
+    assert isclose(maha, 0, abs_tol=1e-05)
 
 
 def test_calculate_mp_value():
@@ -70,7 +71,7 @@ def test_calculate_mp_value():
         pert_df=control_df, control_df=control_df, params={"nb_permutations": 2000}
     )
 
-    assert result == 1
+    assert isclose(result, 1, abs_tol=1e-02)
 
 
 def test_mp_value():
