@@ -173,7 +173,9 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[0,]
+        .iloc[
+            0,
+        ]
     )
     assert np.round(top_result.grit, 4) == 2.2597
     assert top_result.group == "PTK2"
@@ -198,7 +200,9 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[0,]
+        .iloc[
+            0,
+        ]
     )
 
     assert np.round(top_result.grit, 4) == 0.9990
@@ -220,7 +224,7 @@ def test_evaluate_grit():
 def test_evaluate_mp_value():
     # Permutations in mp_value could lead to some edge cases
     np.random.seed(2020)
-    
+
     # Tests on genetic screen dataset
     mp_value_gene_control_perts = [
         "Chr2-1",
@@ -234,7 +238,7 @@ def test_evaluate_mp_value():
         "LacZ-2",
         "LacZ-3",
     ]
-    
+
     mp_value_gene_replicate_groups = "Metadata_pert_name"
 
     mp_value_results_df = evaluate(
@@ -245,20 +249,26 @@ def test_evaluate_mp_value():
         operation="mp_value",
         grit_control_perts=mp_value_gene_control_perts,
     )
-    
+
     # Negative controls should be "close to themselves"
     assert all(
-        mp_value_results_df[[
-            x in mp_value_gene_control_perts for 
-            x in mp_value_results_df.Metadata_pert_name
-                           ]].mp_value >= 0.05)
-    
+        mp_value_results_df[
+            [
+                x in mp_value_gene_control_perts
+                for x in mp_value_results_df.Metadata_pert_name
+            ]
+        ].mp_value
+        >= 0.05
+    )
+
     # Strong perturbation should differ from controls
-    assert "PTK2-2" in list(mp_value_results_df[
-        mp_value_results_df.mp_value == 0].Metadata_pert_name)
-    
-    assert all(mp_value_results_df.columns == 
-               [mp_value_gene_replicate_groups, 'mp_value'])
+    assert "PTK2-2" in list(
+        mp_value_results_df[mp_value_results_df.mp_value == 0].Metadata_pert_name
+    )
+
+    assert all(
+        mp_value_results_df.columns == [mp_value_gene_replicate_groups, "mp_value"]
+    )
 
     # Tests on chemical screen dataset
     mp_value_compound_control_perts = ["DMSO"]
@@ -272,17 +282,23 @@ def test_evaluate_mp_value():
         operation="mp_value",
         grit_control_perts=mp_value_compound_control_perts,
     )
-          
+
     # Negative controls should be "close to themselves"
     assert all(
-        mp_value_results_df[[x in mp_value_compound_control_perts 
-            for x in mp_value_results_df.Metadata_broad_sample
-                            ]].mp_value >= 0.05)
-    
+        mp_value_results_df[
+            [
+                x in mp_value_compound_control_perts
+                for x in mp_value_results_df.Metadata_broad_sample
+            ]
+        ].mp_value
+        >= 0.05
+    )
+
     # Strong perturbation should differ from controls
     assert "BRD-A94756469-001-04-7" in list(
-            mp_value_results_df[
-                mp_value_results_df.mp_value == 0].Metadata_broad_sample)
-    
-    assert all(mp_value_results_df.columns == 
-               [mp_value_compound_replicate_groups, 'mp_value'])
+        mp_value_results_df[mp_value_results_df.mp_value == 0].Metadata_broad_sample
+    )
+
+    assert all(
+        mp_value_results_df.columns == [mp_value_compound_replicate_groups, "mp_value"]
+    )

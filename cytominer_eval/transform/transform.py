@@ -76,7 +76,9 @@ def process_melt(
     # Merge metadata on index for both comparison pairs
     output_df = meta_df.merge(
         meta_df.merge(
-            metric_unlabeled_df, left_index=True, right_on=pair_ids["pair_b"]["index"],
+            metric_unlabeled_df,
+            left_index=True,
+            right_on=pair_ids["pair_b"]["index"],
         ),
         left_index=True,
         right_on=pair_ids["pair_a"]["index"],

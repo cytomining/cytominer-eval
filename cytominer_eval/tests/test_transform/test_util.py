@@ -133,8 +133,9 @@ def test_check_replicate_groups():
                 output = check_replicate_groups(
                     eval_metric=operation, replicate_groups=replicate_groups
                 )
-            assert ( "For mp_value, replicate_groups must be a single string." 
-                in str(ae.value) )
+            assert "For mp_value, replicate_groups must be a single string." in str(
+                ae.value
+            )
         else:
             check_replicate_groups(
                 eval_metric=operation, replicate_groups=replicate_groups
@@ -146,7 +147,7 @@ def test_check_replicate_groups():
             assert "Replicate groups must be a list for the {op} operation".format(
                 op=operation
             ) in str(ae.value)
-            
+
     with pytest.raises(AssertionError) as ae:
         wrong_group_dict = {"MISSING": "nothing here", "MISSING_TOO": "nothing"}
         output = check_replicate_groups(

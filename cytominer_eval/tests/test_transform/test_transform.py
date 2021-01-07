@@ -27,8 +27,12 @@ features = df.drop(meta_features, axis="columns").columns.tolist()
 
 feature_df = df.loc[:, features]
 meta_df = df.loc[:, meta_features]
-sample_a = feature_df.iloc[0,].values
-sample_b = feature_df.iloc[1,].values
+sample_a = feature_df.iloc[
+    0,
+].values
+sample_b = feature_df.iloc[
+    1,
+].values
 example_sample_corr = np.corrcoef(sample_a, sample_b)[0, 1]
 
 pairwise_metric_df = get_pairwise_metric(feature_df, similarity_metric="pearson")

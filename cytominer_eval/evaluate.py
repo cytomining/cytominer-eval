@@ -61,6 +61,6 @@ def evaluate(
             control_perts=grit_control_perts,
             replicate_id=replicate_groups,
             features=features,
-    )
+        )
 
     return metric_result
