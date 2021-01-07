@@ -202,7 +202,7 @@ def calculate_mp_value(
     for (k,v) in params.items():
         p[k] = v
     
-    merge_df = pd.concat([pert_df, control_df], axis="columns").reset_index(drop=True)
+    merge_df = pd.concat([pert_df, control_df]).reset_index(drop=True)
     
     # We reduce the dimensionality with PCA
     # so that 90% of the variance is conserved
