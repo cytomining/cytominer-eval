@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Union
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -135,17 +135,17 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
     return str(list(entries)[0])
 
 
-class DistributionEstimator:
+class MahalanobisEstimator:
     """
     Store location and dispersion estimators of the
     empirical distribution of data provided in an
     array and allow computation of statistical 
     distances 
     """
-    def __init__(self, arr):
+    def __init__(self, arr: Union[pd.DataFrame, np.ndarray]):
         self.sigma = EmpiricalCovariance().fit(arr)
         
-    def mahalanobis(self, X):
+    def mahalanobis(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """
         Compute the mahalanobis distance between
         the empirical distribution described by
@@ -163,7 +163,7 @@ def calculate_mahalanobis(
     assert len(control_df) > 1, "Error! No control perturbations found."
         
     # Get dispersion and center estimators for the control perturbations
-    control_estimators = DistributionEstimator(control_df)
+    control_estimators = MahalanobisEstimator(control_df)
     
     # Distance between mean of perturbation and control
     maha = control_estimators.mahalanobis(
@@ -214,9 +214,6 @@ def calculate_mp_value(
     # NB: this seems useless, as the point of using the Mahalanobis
     # distance instead of the Euclidean distance is to be independent
     # of axes scales
-    
-    # Get dispersion and center estimators for the control perturbations
-    control_estimators = DistributionEstimator(pca_array[-control_df.shape[0]:])
     
     # Distance between mean of perturbation and control
     obs = calculate_mahalanobis(pert_df = pca_array[:pert_df.shape[0]],
