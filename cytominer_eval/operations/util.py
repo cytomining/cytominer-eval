@@ -190,7 +190,9 @@ def default_mp_value_parameters():
 
 
 def calculate_mp_value(
-    pert_df: pd.DataFrame, control_df: pd.DataFrame, params={}
+    pert_df: pd.DataFrame,
+    control_df: pd.DataFrame,
+    params: dict = {},
 ) -> pd.Series:
     """
     Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
