@@ -9,7 +9,7 @@ from typing import List, Union
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.transform.util import check_replicate_groups
-from cytominer_eval.operations import percent_strong, precision_recall, grit
+from cytominer_eval.operations import percent_strong, precision_recall, grit, mp_value
 
 
 def evaluate(
@@ -22,6 +22,7 @@ def evaluate(
     percent_strong_quantile: np.float = 0.95,
     precision_recall_k: int = 10,
     grit_control_perts: List[str] = ["None"],
+    mp_value_params: dict = {},
 ):
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -54,6 +55,14 @@ def evaluate(
             control_perts=grit_control_perts,
             replicate_id=replicate_groups["replicate_id"],
             group_id=replicate_groups["group_id"],
+        )
+    elif operation == "mp_value":
+        metric_result = mp_value(
+            df=profiles,
+            control_perts=grit_control_perts,
+            replicate_id=replicate_groups,
+            features=features,
+            params=mp_value_params,
         )
 
     return metric_result

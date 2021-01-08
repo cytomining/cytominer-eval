@@ -1,15 +1,18 @@
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Union
 
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.covariance import EmpiricalCovariance
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.transform.util import set_pair_ids
 
 
 def assign_replicates(
-    similarity_melted_df: pd.DataFrame, replicate_groups: List[str],
+    similarity_melted_df: pd.DataFrame,
+    replicate_groups: List[str],
 ) -> pd.DataFrame:
     """
     Arguments:
@@ -70,7 +73,11 @@ def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> pd.S
     recall_denom__total_relevant_items = sum(replicate_group_df.group_replicate)
     precision_denom__num_recommended_items = k
 
-    num_recommended_items_at_k = sum(replicate_group_df.iloc[:k,].group_replicate)
+    num_recommended_items_at_k = sum(
+        replicate_group_df.iloc[
+            :k,
+        ].group_replicate
+    )
 
     precision_at_k = num_recommended_items_at_k / precision_denom__num_recommended_items
     recall_at_k = num_recommended_items_at_k / recall_denom__total_relevant_items
@@ -131,3 +138,104 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
         len(entries.unique()) == 1
     ), "grit is calculated for each perturbation independently"
     return str(list(entries)[0])
+
+
+class MahalanobisEstimator:
+    """
+    Store location and dispersion estimators of the
+    empirical distribution of data provided in an
+    array and allow computation of statistical
+    distances
+    """
+
+    def __init__(self, arr: Union[pd.DataFrame, np.ndarray]):
+        self.sigma = EmpiricalCovariance().fit(arr)
+
+    def mahalanobis(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
+        """
+        Compute the mahalanobis distance between
+        the empirical distribution described by
+        this object and points in an array `X`
+        """
+        return self.sigma.mahalanobis(X)
+
+
+def calculate_mahalanobis(pert_df: pd.DataFrame, control_df: pd.DataFrame) -> pd.Series:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    assert len(control_df) > 1, "Error! No control perturbations found."
+
+    # Get dispersion and center estimators for the control perturbations
+    control_estimators = MahalanobisEstimator(control_df)
+
+    # Distance between mean of perturbation and control
+    maha = control_estimators.mahalanobis(np.array(np.mean(pert_df, 0)).reshape(1, -1))[
+        0
+    ]
+    return maha
+
+
+def default_mp_value_parameters():
+    """
+    Set the different default parameters used for mp-values.
+
+    Output:
+    A dictionary with the following keys:
+    rescale_pca - whether the PCA should be scaled by variance explained
+    nb_permutations - how many permutations to do to get empirical p-value
+    """
+    params = {"rescale_pca": True, "nb_permutations": 100}
+    return params
+
+
+def calculate_mp_value(
+    pert_df: pd.DataFrame,
+    control_df: pd.DataFrame,
+    params: dict = {},
+) -> pd.Series:
+    """
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """
+    assert len(control_df) > 1, "Error! No control perturbations found."
+
+    # Assign parameters
+    p = default_mp_value_parameters()
+    assert all(
+        [x in p.keys() for x in params.keys()]
+    ), "Unknown parameters provided. Only {e} are supported.".format(e=p.keys())
+    for (k, v) in params.items():
+        p[k] = v
+
+    merge_df = pd.concat([pert_df, control_df]).reset_index(drop=True)
+
+    # We reduce the dimensionality with PCA
+    # so that 90% of the variance is conserved
+    pca = PCA(n_components=0.9, svd_solver="full")
+    pca_array = pca.fit_transform(merge_df)
+    # We scale columns by the variance explained
+    if p["rescale_pca"]:
+        pca_array = pca_array * pca.explained_variance_ratio_
+    # This seems useless, as the point of using the Mahalanobis
+    # distance instead of the Euclidean distance is to be independent
+    # of axes scales
+
+    # Distance between mean of perturbation and control
+    obs = calculate_mahalanobis(
+        pert_df=pca_array[: pert_df.shape[0]],
+        control_df=pca_array[-control_df.shape[0] :],
+    )
+    # In the paper's methods section it mentions the covariance used
+    # might be modified to include variation of the perturbation as well.
+
+    # Permutation test
+    sim = np.zeros(p["nb_permutations"])
+    pert_mask = np.zeros(pca_array.shape[0], dtype=bool)
+    pert_mask[: pert_df.shape[0]] = 1
+    for i in range(p["nb_permutations"]):
+        pert_mask_perm = np.random.permutation(pert_mask)
+        pert_perm = pca_array[pert_mask_perm]
+        control_perm = pca_array[np.logical_not(pert_mask_perm)]
+        sim[i] = calculate_mahalanobis(pert_df=pert_perm, control_df=control_perm)
+
+    return np.mean([x >= obs for x in sim])

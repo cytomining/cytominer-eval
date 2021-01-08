@@ -11,7 +11,9 @@ from cytominer_eval.transform.util import set_pair_ids, assert_melt
 
 
 def precision_recall(
-    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], k: int,
+    similarity_melted_df: pd.DataFrame,
+    replicate_groups: List[str],
+    k: int,
 ) -> pd.DataFrame:
     """
     Determine the precision and recall at k for all unique replicate groups

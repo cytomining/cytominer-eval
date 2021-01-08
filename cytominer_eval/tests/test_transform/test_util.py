@@ -34,7 +34,7 @@ float_cols = ["float_a", "float_b"]
 
 
 def test_get_available_eval_metrics():
-    expected_result = ["percent_strong", "precision_recall", "grit"]
+    expected_result = ["percent_strong", "precision_recall", "grit", "mp_value"]
     assert expected_result == get_available_eval_metrics()
 
 
@@ -116,7 +116,27 @@ def test_check_replicate_groups():
     replicate_groups = ["Metadata_gene_name", "Metadata_pert_name"]
     replicate_group_dict = {"replicate_id": "testingA", "group_id": "testingB"}
     for operation in available_metrics:
-        if operation != "grit":
+        if operation == "grit":
+            check_replicate_groups(
+                eval_metric=operation, replicate_groups=replicate_group_dict
+            )
+            with pytest.raises(AssertionError) as ae:
+                output = check_replicate_groups(
+                    eval_metric=operation, replicate_groups=replicate_groups
+                )
+            assert "For grit, replicate_groups must be a dict" in str(ae.value)
+        elif operation == "mp_value":
+            check_replicate_groups(
+                eval_metric=operation, replicate_groups=replicate_groups[0]
+            )
+            with pytest.raises(AssertionError) as ae:
+                output = check_replicate_groups(
+                    eval_metric=operation, replicate_groups=replicate_groups
+                )
+            assert "For mp_value, replicate_groups must be a single string." in str(
+                ae.value
+            )
+        else:
             check_replicate_groups(
                 eval_metric=operation, replicate_groups=replicate_groups
             )
@@ -127,15 +147,6 @@ def test_check_replicate_groups():
             assert "Replicate groups must be a list for the {op} operation".format(
                 op=operation
             ) in str(ae.value)
-        else:
-            check_replicate_groups(
-                eval_metric=operation, replicate_groups=replicate_group_dict
-            )
-            with pytest.raises(AssertionError) as ae:
-                output = check_replicate_groups(
-                    eval_metric=operation, replicate_groups=replicate_groups
-                )
-            assert "For grit, replicate_groups must be a dict" in str(ae.value)
 
     with pytest.raises(AssertionError) as ae:
         wrong_group_dict = {"MISSING": "nothing here", "MISSING_TOO": "nothing"}
