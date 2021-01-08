@@ -302,3 +302,15 @@ def test_evaluate_mp_value():
     assert all(
         mp_value_results_df.columns == [mp_value_compound_replicate_groups, "mp_value"]
     )
+
+    with pytest.raises(AssertionError) as ae:
+        mp_value_results_df = evaluate(
+            profiles=compound_profiles,
+            features=compound_features,
+            meta_features=compound_meta_features,
+            replicate_groups=mp_value_compound_replicate_groups,
+            operation="mp_value",
+            grit_control_perts=mp_value_compound_control_perts,
+            mp_value_params={"something else": 1},
+        )
+    assert "Unknown parameters provided. Only" in str(ae.value)

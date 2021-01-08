@@ -73,6 +73,12 @@ def test_calculate_mp_value():
 
     assert isclose(result, 1, abs_tol=1e-02)
 
+    with pytest.raises(AssertionError) as ae:
+        result = calculate_mp_value(
+            pert_df=control_df, control_df=control_df, params={"not_a_parameter": 2000}
+        )
+    assert "Unknown parameters provided. Only" in str(ae.value)
+
 
 def test_mp_value():
     result = mp_value(
@@ -86,3 +92,13 @@ def test_mp_value():
     assert all(result.mp_value <= 1)
     assert all(result.mp_value >= 0)
     assert len(np.unique(df[replicate_id])) == len(result)
+
+    with pytest.raises(AssertionError) as ae:
+        result = mp_value(
+            df=df,
+            control_perts=control_perts,
+            replicate_id=replicate_id,
+            features=features,
+            params={"not_a_parameter": 2000},
+        )
+    assert "Unknown parameters provided. Only" in str(ae.value)
