@@ -17,7 +17,7 @@ def mp_value(
     control_perts: List[str],
     replicate_id: str,
     features: List[str],
-    params={},
+    params: dict = {},
 ) -> pd.DataFrame:
     """
     Calculate multidimensional perturbation value (mp-value).
