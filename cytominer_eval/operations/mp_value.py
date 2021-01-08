@@ -38,7 +38,7 @@ def mp_value(
     assert replicate_id in df.columns, "replicate_id not found in dataframe columns"
 
     # Extract features for control rows
-    control_df = df[df[replicate_id].isin(control_perts)][features]
+    control_df = df.loc[df.loc[:, replicate_id].isin(control_perts), features]
 
     # Calculate mp_value for each perturbation
     mp_value_df = pd.DataFrame(

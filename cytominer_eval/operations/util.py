@@ -214,7 +214,7 @@ def calculate_mp_value(
     # We scale columns by the variance explained
     if p["rescale_pca"]:
         pca_array = pca_array * pca.explained_variance_ratio_
-    # NB: this seems useless, as the point of using the Mahalanobis
+    # This seems useless, as the point of using the Mahalanobis
     # distance instead of the Euclidean distance is to be independent
     # of axes scales
 
@@ -223,7 +223,7 @@ def calculate_mp_value(
         pert_df=pca_array[: pert_df.shape[0]],
         control_df=pca_array[-control_df.shape[0] :],
     )
-    # NB: in the paper's methods section it mentions the covariance used
+    # In the paper's methods section it mentions the covariance used
     # might be modified to include variation of the perturbation as well.
 
     # Permutation test

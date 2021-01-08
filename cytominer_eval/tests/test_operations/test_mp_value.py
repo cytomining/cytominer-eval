@@ -36,7 +36,7 @@ def test_calculate_mahalanobis():
     maha = calculate_mahalanobis(pert_df=sub_df, control_df=control_df)
 
     assert isinstance(maha, float)
-    # NB: the following value is empirically determined
+    # The following value is empirically determined
     # and not theoretically justified but avoids unwanted
     # changes in the implementation of the Mahalanobis distance
     assert isclose(maha, 3.62523778789, abs_tol=1e-09)
