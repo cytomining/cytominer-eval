@@ -17,6 +17,7 @@ def mp_value(
     control_perts: List[str],
     replicate_id: str,
     features: List[str],
+    params={},
 ) -> pd.DataFrame:
     """
     Calculate multidimensional perturbation value (mp-value).
@@ -30,6 +31,8 @@ def mp_value(
     replicate_id - the metadata identifier marking which column tracks replicate perts
     features - columns containing numerical features to be used for the mp-value
                computation
+    params - a dictionary containing optional parameters provided. See list of
+             parameters in :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
 
     Output:
     A dataframe of mp-values per perturbation.
@@ -43,7 +46,7 @@ def mp_value(
     # Calculate mp_value for each perturbation
     mp_value_df = pd.DataFrame(
         df.groupby(replicate_id).apply(
-            lambda x: calculate_mp_value(x[features], control_df)
+            lambda x: calculate_mp_value(x[features], control_df, params)
         ),
         columns=["mp_value"],
     )
