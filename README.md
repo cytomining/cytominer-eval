@@ -19,7 +19,7 @@ Since the project is actively being developed, with new features added regularly
 
 ```bash
 # Example:
-pip install git+git://github.com/cytomining/cytominer-eval@6f9d350badd0a18b6c1a76171813aaf9a52f8d9f
+pip install git+git://github.com/cytomining/cytominer-eval@5c9fb860d1b27e746ee498d625d033475caceb7e
 ```
 
 ## Usage
@@ -49,10 +49,16 @@ evaluate(
     features=features,
     meta_features=meta_features,
     replicate_groups=replicate_groups,
-    operation="percent_strong",
+    replicate_reproducibility_return_median_cor=False,
+    operation="replicate_reproducibility",
 )
 ```
 
 ## Metrics
 
-Currently, three metrics are supported: 1) Percent strong, 2) Precision/recall, 3) Grit
+Currently, four metric operations are supported:
+
+1. Replicate reproducibility
+2. Precision/recall
+3. mp-value
+4. Grit
