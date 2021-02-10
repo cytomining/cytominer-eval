@@ -1,12 +1,10 @@
-"""
-Functions to calculate grit
+"""Functions to calculate grit
 
-Grit describes the phenotype strength of replicate perturbations along two distinct axes:
+Grit describes phenotype strength of replicate profiles along two distinct axes:
 
 - Similarity to other perturbations that target the same larger group (e.g. gene, MOA)
 - Similarity to control perturbations
 """
-
 import numpy as np
 import pandas as pd
 from typing import List
@@ -25,17 +23,22 @@ def grit(
     replicate_id: str,
     group_id: str,
 ) -> pd.DataFrame:
-    """
-    Calculate grit
+    r"""Calculate grit
 
-    Arguments:
-    similarity_melted_df - a long pandas dataframe output from transform.metric_melt
-    control_perts - a list of control perturbations to calculate a null distribution
-    replicate_id - the metadata identifier marking which column tracks replicate perts
-    group_id - the metadata identifier marking which column tracks a higher order groups
-               for all perturbations
+    Parameters
+    ----------
+    similarity_melted_df : pandas.DataFrame
+        a long pandas dataframe output from cytominer_eval.transform.metric_melt
+    control_perts : list
+        a list of control perturbations to calculate a null distribution
+    replicate_id : str
+        the metadata identifier marking which column tracks replicate perts
+    group_id : str
+        the metadata identifier marking which column tracks a higher order groups for
+        all perturbations
 
-    Output:
+    Returns
+    -------
     A dataframe of grit measurements per perturbation
     """
     # Determine pairwise replicates

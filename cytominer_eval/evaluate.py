@@ -1,7 +1,7 @@
-"""
-Extract evaluation metrics from profiling experiments
-"""
+"""Extract evaluation metrics from profiling experiments.
 
+The primary entrypoint into quickly evaluating profile quality.
+"""
 import warnings
 import numpy as np
 import pandas as pd
@@ -24,6 +24,61 @@ def evaluate(
     grit_control_perts: List[str] = ["None"],
     mp_value_params: dict = {},
 ):
+    r"""Evaluate profile quality and strength.
+
+    For a given profile dataframe containing both metadata and feature measurement
+    columns, use this function to calculate profile quality metrics. The function
+    contains all the necessary arguments for specific evaluation operations.
+
+    Parameters
+    ----------
+    profiles : pandas.DataFrame
+        profiles must be a pandas DataFrame with profile samples as rows and profile
+        features as columns. The columns should contain both metadata and feature
+        measurements.
+    features : list
+        A list of strings corresponding to feature measurement column names in the
+        `profiles` DataFrame. All features listed must be found in `profiles`.
+    meta_features : list
+        A list of strings corresponding to metadata column names in the `profiles`
+        DataFrame. All features listed must be found in `profiles`.
+    replicate_groups : {str, list, dict}
+        An important variable indicating which metadata columns denote replicate
+        information. All metric operations require replicate profiles.
+        `replicate_groups` indicates a str or list of columns to use. For
+        `operation="grit"`, `replicate_groups` is a dict with two keys: "replicate_id"
+        and "group_id". "replicate_id" is the column name that stores the unique
+        identifier for each profile, while "group_id" is the column name indicating
+        how replicates are defined. See also cytominer_eval.operations.grit and
+        cytominer_eval.transform.util.check_replicate_groups
+    operation : {'percent_strong', 'precision_recall', 'grit', 'mp_value'}, optional
+        The specific evaluation metric to calculate.
+    similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
+        How to calculate pairwise similarity. Defaults to "pearson". We use the input
+        in pandas.DataFrame.cor().
+
+    Returns
+    -------
+    The resulting evaluation metric. The return is either a single value or a pandas
+    DataFrame summarizing the metric as specified in `operation`.
+
+    Operation-specific parameters
+    -----------------------------
+    percent_strong_quantile : {0.95, ...}, optional
+        Only used when `operation='percent_strong'`. This indicates the percentile of
+        the non-replicate pairwise similarity to consider a reproducible phenotype.
+    precision_recall_k : {10, ...}, optional
+        Only used when `operation='precision_recall'`. Used to calculate precision and
+        recall considering the top k profiles according to pairwise similarity.
+    grit_control_perts : {None, ...}, optional
+        Only used when `operation='grit'`. Specific profile identifiers used as a
+        reference when calculating grit. The list entries must be found in the
+        `replicate_groups[replicate_id]` column.
+    mp_value_params : {{}, ...}, optional
+        Only used when `operation='mp_value'`. A key, item pair of optional parameters
+        for calculating mp value. See also
+        cytominer_eval.operations.util.default_mp_value_parameters
+    """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
 
