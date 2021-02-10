@@ -27,14 +27,15 @@ def evaluate(
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
 
-    # Melt the input profiles to long format
-    similarity_melted_df = metric_melt(
-        df=profiles,
-        features=features,
-        metadata_features=meta_features,
-        similarity_metric=similarity_metric,
-        eval_metric=operation,
-    )
+    if operation != "mp_value":
+        # Melt the input profiles to long format
+        similarity_melted_df = metric_melt(
+            df=profiles,
+            features=features,
+            metadata_features=meta_features,
+            similarity_metric=similarity_metric,
+            eval_metric=operation,
+        )
 
     # Perform the input operation
     if operation == "percent_strong":
