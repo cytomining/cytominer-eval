@@ -1,5 +1,4 @@
-"""
-Functions to calculate replicate reproducibility
+"""Functions to calculate replicate reproducibility
 """
 
 import numpy as np

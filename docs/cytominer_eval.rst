@@ -1,26 +1,22 @@
-cytominer\_eval package
-=======================
+cytominer_eval
+==============
 
-Subpackages
+evaluate.py
 -----------
-
-.. toctree::
-   :maxdepth: 4
-
-   cytominer_eval.operations
-   cytominer_eval.tests
-   cytominer_eval.transform
-
-Submodules
-----------
-
-cytominer\_eval.evaluate module
--------------------------------
 
 .. automodule:: cytominer_eval.evaluate
    :members:
    :undoc-members:
    :show-inheritance:
+
+Other functions
+---------------
+
+.. toctree::
+  :maxdepth: 4
+
+  cytominer_eval.operations
+  cytominer_eval.transform
 
 Module contents
 ---------------

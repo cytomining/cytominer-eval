@@ -1,4 +1,4 @@
-"""Extract evaluation metrics from profiling experiments.
+"""Calculate evaluation metrics from profiling experiments.
 
 The primary entrypoint into quickly evaluating profile quality.
 """
@@ -49,20 +49,21 @@ def evaluate(
         `operation="grit"`, `replicate_groups` is a dict with two keys: "replicate_id"
         and "group_id". "replicate_id" is the column name that stores the unique
         identifier for each profile, while "group_id" is the column name indicating
-        how replicates are defined. See also cytominer_eval.operations.grit and
-        cytominer_eval.transform.util.check_replicate_groups
+        how replicates are defined. See also :py:func:`cytominer_eval.operations.grit`
+        and :py:func:`cytominer_eval.transform.util.check_replicate_groups`
     operation : {'percent_strong', 'precision_recall', 'grit', 'mp_value'}, optional
-        The specific evaluation metric to calculate.
+        The specific evaluation metric to calculate. The default is "percent_strong".
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
-        in pandas.DataFrame.cor().
+        in pandas.DataFrame.cor(). The default is "pearson".
 
     Returns
     -------
-    The resulting evaluation metric. The return is either a single value or a pandas
-    DataFrame summarizing the metric as specified in `operation`.
+    float, pd.DataFrame
+        The resulting evaluation metric. The return is either a single value or a pandas
+        DataFrame summarizing the metric as specified in `operation`.
 
-    Operation-specific parameters
+    Other Parameters
     -----------------------------
     percent_strong_quantile : {0.95, ...}, optional
         Only used when `operation='percent_strong'`. This indicates the percentile of
