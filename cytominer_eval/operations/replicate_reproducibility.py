@@ -9,7 +9,7 @@ from .util import assign_replicates
 from cytominer_eval.transform.util import assert_melt
 
 
-def percent_strong(
+def replicate_reproducibility(
     similarity_melted_df: pd.DataFrame,
     replicate_groups: List[str],
     quantile: np.float = 0.95,
