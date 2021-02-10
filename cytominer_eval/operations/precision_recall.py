@@ -15,8 +15,7 @@ def precision_recall(
     replicate_groups: List[str],
     k: int,
 ) -> pd.DataFrame:
-    """
-    Determine the precision and recall at k for all unique replicate groups
+    """Determine the precision and recall at k for all unique replicate groups
     based on a predefined similarity metric (see cytominer_eval.transform.metric_melt)
 
     Arguments:
@@ -28,7 +27,6 @@ def precision_recall(
     Output:
     pandas DataFrame of precision and recall metrics for all replicate groups
     """
-
     # Determine pairwise replicates and make sure to sort based on the metric!
     similarity_melted_df = assign_replicates(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
