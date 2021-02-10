@@ -110,11 +110,11 @@ def test_evaluate_replicate_reprod_return_cor_true():
     assert top_genes == ["CDK2", "CCNE1", "ATF4", "KIF11", "CCND1"]
 
     assert np.round(med_cor_df.similarity_metric.max(), 3) == 0.949
-    assert med_cor_df.columns.tolist() == [
+    assert sorted(med_cor_df.columns.tolist()) == sorted([
         "Metadata_gene_name",
         "Metadata_pert_name",
         "similarity_metric",
-    ]
+    ])
 
 
 def test_evaluate_precision_recall():
