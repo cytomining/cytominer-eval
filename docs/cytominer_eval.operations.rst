@@ -22,10 +22,10 @@ cytominer\_eval.operations.mp\_value
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.operations.percent\_strong
-------------------------------------------
+cytominer\_eval.operations.replicate\_reproducibility
+-----------------------------------------------------
 
-.. automodule:: cytominer_eval.operations.percent_strong
+.. automodule:: cytominer_eval.operations.replicate_reproducibility
    :members:
    :undoc-members:
    :show-inheritance:

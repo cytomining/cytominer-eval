@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 
 def get_available_eval_metrics():
-    return ["percent_strong", "precision_recall", "grit", "mp_value"]
+    return ["replicate_reproducibility", "precision_recall", "grit", "mp_value"]
 
 
 def get_available_similarity_metrics():
@@ -56,7 +56,9 @@ def assert_eval_metric(eval_metric: str):
     )
 
 
-def assert_melt(df: pd.DataFrame, eval_metric: str = "percent_strong") -> None:
+def assert_melt(
+    df: pd.DataFrame, eval_metric: str = "replicate_reproducibility"
+) -> None:
 
     assert_eval_metric(eval_metric=eval_metric)
 
@@ -68,7 +70,7 @@ def assert_melt(df: pd.DataFrame, eval_metric: str = "percent_strong") -> None:
     assert_error = "{err} This is a fatal error providing incorrect results".format(
         err=assert_error
     )
-    if eval_metric == "percent_strong":
+    if eval_metric == "replicate_reproducibility":
         assert index_sums[0] != index_sums[1], assert_error
     elif eval_metric == "precision_recall":
         assert index_sums[0] == index_sums[1], assert_error

@@ -36,7 +36,9 @@ def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFram
 
 
 def process_melt(
-    df: pd.DataFrame, meta_df: pd.DataFrame, eval_metric: str = "percent_strong"
+    df: pd.DataFrame,
+    meta_df: pd.DataFrame,
+    eval_metric: str = "replicate_reproducibility",
 ) -> pd.DataFrame:
 
     assert df.shape[0] == df.shape[1], "Matrix must be symmetrical"
@@ -50,10 +52,10 @@ def process_melt(
     pair_ids = set_pair_ids()
 
     # Subset the pairwise similarity metric depending on the eval metric given:
-    #   "percent_strong" - requires only the upper triangle of a symmetric matrix
+    #   "replicate_reproducibility" - requires only the upper triangle of a symmetric matrix
     #   "precision_recall" - requires the full symmetric matrix (no diagonal)
     # Remove pairwise matrix diagonal and redundant pairwise comparisons
-    if eval_metric == "percent_strong":
+    if eval_metric == "replicate_reproducibility":
         upper_tri = get_upper_matrix(df)
         df = df.where(upper_tri)
     else:
@@ -92,7 +94,7 @@ def metric_melt(
     df: pd.DataFrame,
     features: List[str],
     metadata_features: List[str],
-    eval_metric: str = "percent_strong",
+    eval_metric: str = "replicate_reproducibility",
     similarity_metric: str = "pearson",
 ) -> pd.DataFrame:
     # Subset dataframes to specific features

@@ -34,7 +34,12 @@ float_cols = ["float_a", "float_b"]
 
 
 def test_get_available_eval_metrics():
-    expected_result = ["percent_strong", "precision_recall", "grit", "mp_value"]
+    expected_result = [
+        "replicate_reproducibility",
+        "precision_recall",
+        "grit",
+        "mp_value",
+    ]
     assert expected_result == get_available_eval_metrics()
 
 
