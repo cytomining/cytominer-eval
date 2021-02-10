@@ -1,8 +1,15 @@
-"""
-Functions to calculate multidimensional perturbation values
+"""Functions to calculate multidimensional perturbation values (mp-value)
 
-This describes the distance in dimensionality-reduced space between a perturbation
-and a control.
+mp-value describes the distance, in dimensionality-reduced space, between a perturbation
+and a control [1]_.
+
+References
+----------
+
+.. [1] Hutz, J. et al. "The Multidimensional Perturbation Value: A Single Metric to
+   Measure Similarity and Activity of Treatments in High-Throughput Multidimensional
+   Screens" Journal of Biomolecular Screening, Volume: 18 issue: 4, page(s): 367-377.
+   doi: 10.1177/1087057112469257
 """
 
 import numpy as np
@@ -19,23 +26,26 @@ def mp_value(
     features: List[str],
     params: dict = {},
 ) -> pd.DataFrame:
-    """
-    Calculate multidimensional perturbation value (mp-value).
-    See DOI: 10.1177/1087057112469257
+    """Calculate multidimensional perturbation value (mp-value) [1]_.
 
-    Arguments:
-    df - a pandas dataframe with measurements on each row and features or metadata in
-         each column
-    control_perts - a list of control perturbations against which the distances will be
-                    computed
-    replicate_id - the metadata identifier marking which column tracks replicate perts
-    features - columns containing numerical features to be used for the mp-value
-               computation
-    params - a dictionary containing optional parameters provided. See list of
-             parameters in :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        profiles with measurements per row and features or metadata per column.
+    control_perts : list
+        The control perturbations against which the distances will be computed.
+    replicate_id : str
+        The metadata identifier marking which column tracks control and replicate perts.
+    features : list
+        columns containing numerical features to be used for the mp-value computation
+    params : dict, optional
+        Optional parameters provided. See list of parameters in
+        :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
 
-    Output:
-    A dataframe of mp-values per perturbation.
+    Returns
+    -------
+    pd.DataFrame
+        mp-values per perturbation.
     """
 
     assert replicate_id in df.columns, "replicate_id not found in dataframe columns"

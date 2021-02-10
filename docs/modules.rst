@@ -1,5 +1,5 @@
-cytominer_eval
-==============
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 4

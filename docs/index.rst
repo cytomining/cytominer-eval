@@ -15,6 +15,7 @@ This python package implements common metrics used to evaluate profile quality a
    :caption: Contents:
 
    install
+   tutorial
    modules
 
 Indices and tables

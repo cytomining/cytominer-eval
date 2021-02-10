@@ -1,19 +1,18 @@
-cytominer\_eval.transform package
-=================================
+Transform functions
+===================
 
-Submodules
-----------
+Helper functions to process profile data.
 
-cytominer\_eval.transform.transform module
-------------------------------------------
+cytominer\_eval.transform.transform
+-----------------------------------
 
 .. automodule:: cytominer_eval.transform.transform
    :members:
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.transform.util module
--------------------------------------
+cytominer\_eval.transform.util
+------------------------------
 
 .. automodule:: cytominer_eval.transform.util
    :members:

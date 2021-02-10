@@ -1,6 +1,4 @@
-"""Functions to calculate grit
-
-Grit describes phenotype strength of replicate profiles along two distinct axes:
+"""Grit describes phenotype strength of replicate profiles along two distinct axes:
 
 - Similarity to other perturbations that target the same larger group (e.g. gene, MOA)
 - Similarity to control perturbations
@@ -39,7 +37,8 @@ def grit(
 
     Returns
     -------
-    A dataframe of grit measurements per perturbation
+    pandas.DataFrame
+        A dataframe of grit measurements per perturbation
     """
     # Determine pairwise replicates
     similarity_melted_df = assign_replicates(
