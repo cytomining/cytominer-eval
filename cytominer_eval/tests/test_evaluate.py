@@ -40,9 +40,9 @@ compound_features = compound_profiles.drop(
 compound_groups = ["Metadata_broad_sample", "Metadata_mg_per_ml"]
 
 
-def test_evaluate_percent_strong():
+def test_evaluate_replicate_reproducibility():
     similarity_metrics = get_available_similarity_metrics()
-    percent_strong_quantiles = [0.5, 0.95]
+    replicate_reproducibility_quantiles = [0.5, 0.95]
 
     expected_result = {
         "gene": {
@@ -58,15 +58,16 @@ def test_evaluate_percent_strong():
     }
 
     for sim_metric in similarity_metrics:
-        for quant in percent_strong_quantiles:
+        for quant in replicate_reproducibility_quantiles:
             gene_res = evaluate(
                 profiles=gene_profiles,
                 features=gene_features,
                 meta_features=gene_meta_features,
                 replicate_groups=gene_groups,
-                operation="percent_strong",
+                operation="replicate_reproducibility",
+                replicate_reproducibility_return_median_cor=False,
                 similarity_metric=sim_metric,
-                percent_strong_quantile=quant,
+                replicate_reproducibility_quantile=quant,
             )
 
             compound_res = evaluate(
@@ -74,9 +75,10 @@ def test_evaluate_percent_strong():
                 features=compound_features,
                 meta_features=compound_meta_features,
                 replicate_groups=compound_groups,
-                operation="percent_strong",
+                operation="replicate_reproducibility",
+                replicate_reproducibility_return_median_cor=False,
                 similarity_metric=sim_metric,
-                percent_strong_quantile=quant,
+                replicate_reproducibility_quantile=quant,
             )
 
             assert (
@@ -86,6 +88,33 @@ def test_evaluate_percent_strong():
                 np.round(compound_res, 3)
                 == expected_result["compound"][sim_metric][str(quant)]
             )
+
+
+def test_evaluate_replicate_reprod_return_cor_true():
+    reprod, med_cor_df = evaluate(
+        profiles=gene_profiles,
+        features=gene_features,
+        meta_features=gene_meta_features,
+        replicate_groups=gene_groups,
+        operation="replicate_reproducibility",
+        replicate_reproducibility_return_median_cor=True,
+        similarity_metric="pearson",
+        replicate_reproducibility_quantile=0.95,
+    )
+
+    med_cor_df = med_cor_df.sort_values(by="similarity_metric", ascending=False)
+
+    assert np.round(reprod, 3) == 0.056
+
+    top_genes = med_cor_df.Metadata_gene_name[0:5].tolist()
+    assert top_genes == ["CDK2", "CCNE1", "ATF4", "KIF11", "CCND1"]
+
+    assert np.round(med_cor_df.similarity_metric.max(), 3) == 0.949
+    assert med_cor_df.columns.tolist() == [
+        "Metadata_gene_name",
+        "Metadata_pert_name",
+        "similarity_metric",
+    ]
 
 
 def test_evaluate_precision_recall():

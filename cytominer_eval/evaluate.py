@@ -9,7 +9,12 @@ from typing import List, Union
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.transform.util import check_replicate_groups
-from cytominer_eval.operations import percent_strong, precision_recall, grit, mp_value
+from cytominer_eval.operations import (
+    replicate_reproducibility,
+    precision_recall,
+    grit,
+    mp_value,
+)
 
 
 def evaluate(
@@ -17,9 +22,10 @@ def evaluate(
     features: List[str],
     meta_features: List[str],
     replicate_groups: Union[List[str], dict],
-    operation: str = "percent_strong",
+    operation: str = "replicate_reproducibility",
     similarity_metric: str = "pearson",
-    percent_strong_quantile: np.float = 0.95,
+    replicate_reproducibility_quantile: np.float = 0.95,
+    replicate_reproducibility_return_median_cor: bool = False,
     precision_recall_k: int = 10,
     grit_control_perts: List[str] = ["None"],
     mp_value_params: dict = {},
@@ -51,8 +57,8 @@ def evaluate(
         identifier for each profile, while "group_id" is the column name indicating
         how replicates are defined. See also :py:func:`cytominer_eval.operations.grit`
         and :py:func:`cytominer_eval.transform.util.check_replicate_groups`
-    operation : {'percent_strong', 'precision_recall', 'grit', 'mp_value'}, optional
-        The specific evaluation metric to calculate. The default is "percent_strong".
+    operation : {'replicate_reproducibility', 'precision_recall', 'grit', 'mp_value'}, optional
+        The specific evaluation metric to calculate. The default is "replicate_reproducibility".
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
         in pandas.DataFrame.cor(). The default is "pearson".
@@ -65,9 +71,14 @@ def evaluate(
 
     Other Parameters
     -----------------------------
-    percent_strong_quantile : {0.95, ...}, optional
-        Only used when `operation='percent_strong'`. This indicates the percentile of
-        the non-replicate pairwise similarity to consider a reproducible phenotype.
+    replicate_reproducibility_quantile : {0.95, ...}, optional
+        Only used when `operation='replicate_reproducibility'`. This indicates the
+        percentile of the non-replicate pairwise similarity to consider a reproducible
+        phenotype. Defaults to 0.95.
+    replicate_reproducibility_return_median_cor : bool, optional
+        Only used when `operation='replicate_reproducibility'`. If True, then also
+        return pairwise correlations as defined by replicate_groups and
+        similarity metric
     precision_recall_k : {10, ...}, optional
         Only used when `operation='precision_recall'`. Used to calculate precision and
         recall considering the top k profiles according to pairwise similarity.
@@ -94,11 +105,12 @@ def evaluate(
         )
 
     # Perform the input operation
-    if operation == "percent_strong":
-        metric_result = percent_strong(
+    if operation == "replicate_reproducibility":
+        metric_result = replicate_reproducibility(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
-            quantile=percent_strong_quantile,
+            quantile_over_null=replicate_reproducibility_quantile,
+            return_median_correlations=replicate_reproducibility_return_median_cor,
         )
     elif operation == "precision_recall":
         metric_result = precision_recall(
