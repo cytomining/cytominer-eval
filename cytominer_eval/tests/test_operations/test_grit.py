@@ -91,7 +91,7 @@ def test_calculate_grit():
     expected_result = {"perturbation": "MTOR-2", "group": "MTOR", "grit": 1.55075}
     expected_result = pd.DataFrame(expected_result, index=["result"]).transpose()
 
-    assert_frame_equal(grit_result, expected_result, check_less_precise=True)
+    assert_frame_equal(grit_result, expected_result)
 
     # Calculate grit will not work with singleton perturbations
     # (no other perts in same group)
@@ -107,7 +107,7 @@ def test_calculate_grit():
     expected_result = {"perturbation": "AURKB-2", "group": "AURKB", "grit": np.nan}
     expected_result = pd.DataFrame(expected_result, index=["result"]).transpose()
 
-    assert_frame_equal(grit_result, expected_result, check_less_precise=True)
+    assert_frame_equal(grit_result, expected_result)
 
     # Calculate grit will not work with the full dataframe
     with pytest.raises(AssertionError) as ae:
@@ -147,7 +147,7 @@ def test_grit():
     expected_result = {"perturbation": "PTK2-2", "group": "PTK2", "grit": 4.61094}
     expected_result = pd.DataFrame(expected_result, index=[0]).transpose()
 
-    assert_frame_equal(top_result, expected_result, check_less_precise=True)
+    assert_frame_equal(top_result, expected_result)
 
     # There are six singletons in this dataset
     assert result.grit.isna().sum() == 6
@@ -157,3 +157,39 @@ def test_grit():
 
     # With this data, we do not expect the sum of grit to change
     assert np.round(result.grit.sum(), 0) == 152.0
+
+
+def test_grit_summary_metric():
+    result = grit(
+        similarity_melted_df=similarity_melted_df,
+        control_perts=control_perts,
+        replicate_id=replicate_id,
+        group_id=group_id,
+        replicate_summary_method="median",
+    ).sort_values(by="grit")
+
+    assert all([x in result.columns for x in ["perturbation", "group", "grit"]])
+
+    top_result = pd.DataFrame(
+        result.sort_values(by="grit", ascending=False)
+        .reset_index(drop=True)
+        .iloc[0, :],
+    )
+
+    expected_result = {"perturbation": "PTK2-2", "group": "PTK2", "grit": 4.715917}
+    expected_result = pd.DataFrame(expected_result, index=[0]).transpose()
+
+    assert_frame_equal(
+        top_result,
+        expected_result,
+    )
+
+    with pytest.raises(ValueError) as ve:
+        output = grit(
+            similarity_melted_df=similarity_melted_df,
+            control_perts=control_perts,
+            replicate_id=replicate_id,
+            group_id=group_id,
+            replicate_summary_method="fail",
+        )
+    assert "method not supported, use one of:" in str(ve.value)

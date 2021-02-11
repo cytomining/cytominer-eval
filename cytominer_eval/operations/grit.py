@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assign_replicates, calculate_grit
+from .util import assign_replicates, calculate_grit, check_grit_replicate_summary_method
 from cytominer_eval.transform.util import (
     set_pair_ids,
     set_grit_column_info,
@@ -20,6 +20,7 @@ def grit(
     control_perts: List[str],
     replicate_id: str,
     group_id: str,
+    replicate_summary_method: str = "mean",
 ) -> pd.DataFrame:
     r"""Calculate grit
 
@@ -30,16 +31,20 @@ def grit(
     control_perts : list
         a list of control perturbations to calculate a null distribution
     replicate_id : str
-        the metadata identifier marking which column tracks replicate perts
+        the metadata identifier marking which column tracks unique identifiers
     group_id : str
-        the metadata identifier marking which column tracks a higher order groups for
-        all perturbations
+        the metadata identifier marking which column defines how replicates are grouped
+    replicate_summary_method : {'mean', 'median'}, optional
+        how replicate z-scores to control perts are summarized. Defaults to "mean".
 
     Returns
     -------
     pandas.DataFrame
         A dataframe of grit measurements per perturbation
     """
+    # Check if we support the provided summary method
+    check_grit_replicate_summary_method(replicate_summary_method)
+
     # Determine pairwise replicates
     similarity_melted_df = assign_replicates(
         similarity_melted_df=similarity_melted_df,
@@ -61,7 +66,14 @@ def grit(
     # Calculate grit for each perturbation
     grit_df = (
         similarity_melted_df.groupby(replicate_col_name)
-        .apply(lambda x: calculate_grit(x, control_perts, column_id_info))
+        .apply(
+            lambda x: calculate_grit(
+                replicate_group_df=x,
+                control_perts=control_perts,
+                column_id_info=column_id_info,
+                replicate_summary_method=replicate_summary_method,
+            )
+        )
         .reset_index(drop=True)
     )
 
