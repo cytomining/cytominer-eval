@@ -28,6 +28,7 @@ def evaluate(
     replicate_reproducibility_return_median_cor: bool = False,
     precision_recall_k: int = 10,
     grit_control_perts: List[str] = ["None"],
+    grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
 ):
     r"""Evaluate profile quality and strength.
@@ -86,10 +87,14 @@ def evaluate(
         Only used when `operation='grit'`. Specific profile identifiers used as a
         reference when calculating grit. The list entries must be found in the
         `replicate_groups[replicate_id]` column.
+    grit_replicate_summary_method : {"mean", "median"}, optional
+        Only used when `operation='grit'`. Defines how the replicate z scores are
+        summarized. see
+        :py:func:`cytominer_eval.operations.util.calculate_grit`
     mp_value_params : {{}, ...}, optional
         Only used when `operation='mp_value'`. A key, item pair of optional parameters
         for calculating mp value. See also
-        cytominer_eval.operations.util.default_mp_value_parameters
+        :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -124,6 +129,7 @@ def evaluate(
             control_perts=grit_control_perts,
             replicate_id=replicate_groups["replicate_id"],
             group_id=replicate_groups["group_id"],
+            replicate_summary_method=grit_replicate_summary_method,
         )
     elif operation == "mp_value":
         metric_result = mp_value(

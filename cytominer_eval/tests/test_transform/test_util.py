@@ -9,6 +9,7 @@ import pandas.api.types as ptypes
 from cytominer_eval.transform.util import (
     get_available_eval_metrics,
     get_available_similarity_metrics,
+    get_available_grit_summary_methods,
     get_upper_matrix,
     convert_pandas_dtypes,
     assert_pandas_dtypes,
@@ -17,6 +18,7 @@ from cytominer_eval.transform.util import (
     assert_eval_metric,
     assert_melt,
     check_replicate_groups,
+    check_grit_replicate_summary_method,
 )
 
 random.seed(123)
@@ -46,6 +48,11 @@ def test_get_available_eval_metrics():
 def test_get_available_similarity_metrics():
     expected_result = ["pearson", "kendall", "spearman"]
     assert expected_result == get_available_similarity_metrics()
+
+
+def test_get_available_grit_summary_methods():
+    expected_result = ["mean", "median"]
+    assert expected_result == get_available_grit_summary_methods()
 
 
 def test_assert_eval_metric():
@@ -159,3 +166,14 @@ def test_check_replicate_groups():
             eval_metric="grit", replicate_groups=wrong_group_dict
         )
     assert "replicate_groups for grit not formed properly." in str(ae.value)
+
+
+def test_check_grit_replicate_summary_method():
+
+    # Pass
+    for metric in get_available_grit_summary_methods():
+        check_grit_replicate_summary_method(metric)
+
+    with pytest.raises(ValueError) as ve:
+        output = check_grit_replicate_summary_method("fail")
+    assert "method not supported, use one of:" in str(ve.value)

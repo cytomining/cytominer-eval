@@ -7,7 +7,10 @@ from sklearn.decomposition import PCA
 from sklearn.covariance import EmpiricalCovariance
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.transform.util import set_pair_ids
+from cytominer_eval.transform.util import (
+    set_pair_ids,
+    check_grit_replicate_summary_method,
+)
 
 
 def assign_replicates(
@@ -88,11 +91,17 @@ def calculate_precision_recall(replicate_group_df: pd.DataFrame, k: int) -> pd.S
 
 
 def calculate_grit(
-    replicate_group_df: pd.DataFrame, control_perts: List[str], column_id_info: dict
+    replicate_group_df: pd.DataFrame,
+    control_perts: List[str],
+    column_id_info: dict,
+    replicate_summary_method: str = "mean",
 ) -> pd.Series:
     """
     Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
     """
+    # Confirm that we support the provided summary method
+    check_grit_replicate_summary_method(replicate_summary_method)
+
     group_entry = get_grit_entry(replicate_group_df, column_id_info["group"]["id"])
     pert = get_grit_entry(replicate_group_df, column_id_info["replicate"]["id"])
 
@@ -125,7 +134,11 @@ def calculate_grit(
         scaler = StandardScaler()
         scaler.fit(control_distrib)
         grit_z_scores = scaler.transform(same_group_distrib)
-        grit = np.mean(grit_z_scores)
+
+        if replicate_summary_method == "mean":
+            grit = np.mean(grit_z_scores)
+        elif replicate_summary_method == "median":
+            grit = np.median(grit_z_scores)
 
         return_bundle = {"perturbation": pert, "group": group_entry, "grit": grit}
 

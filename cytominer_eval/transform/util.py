@@ -13,6 +13,10 @@ def get_available_similarity_metrics():
     return ["pearson", "kendall", "spearman"]
 
 
+def get_available_grit_summary_methods():
+    return ["mean", "median"]
+
+
 def get_upper_matrix(df: pd.DataFrame) -> np.array:
     return np.triu(np.ones(df.shape), k=1).astype(bool)
 
@@ -148,3 +152,14 @@ def set_grit_column_info(replicate_id: str, group_id: str) -> dict:
 
     column_id_info = {"replicate": replicate_id_info, "group": group_id_info}
     return column_id_info
+
+
+def check_grit_replicate_summary_method(replicate_summary_method: str):
+    avail_methods = get_available_grit_summary_methods()
+
+    if replicate_summary_method not in avail_methods:
+        raise ValueError(
+            "{input} method not supported, use one of: {avail}".format(
+                input=replicate_summary_method, avail=avail_methods
+            )
+        )

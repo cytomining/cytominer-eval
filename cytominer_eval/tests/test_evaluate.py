@@ -110,11 +110,13 @@ def test_evaluate_replicate_reprod_return_cor_true():
     assert top_genes == ["CDK2", "CCNE1", "ATF4", "KIF11", "CCND1"]
 
     assert np.round(med_cor_df.similarity_metric.max(), 3) == 0.949
-    assert sorted(med_cor_df.columns.tolist()) == sorted([
-        "Metadata_gene_name",
-        "Metadata_pert_name",
-        "similarity_metric",
-    ])
+    assert sorted(med_cor_df.columns.tolist()) == sorted(
+        [
+            "Metadata_gene_name",
+            "Metadata_pert_name",
+            "similarity_metric",
+        ]
+    )
 
 
 def test_evaluate_precision_recall():
@@ -197,6 +199,7 @@ def test_evaluate_grit():
         replicate_groups=grit_gene_replicate_groups,
         operation="grit",
         grit_control_perts=grit_gene_control_perts,
+        grit_replicate_summary_method="median",
     )
 
     top_result = (
@@ -206,7 +209,7 @@ def test_evaluate_grit():
             0,
         ]
     )
-    assert np.round(top_result.grit, 4) == 2.2597
+    assert np.round(top_result.grit, 4) == 2.3352
     assert top_result.group == "PTK2"
     assert top_result.perturbation == "PTK2-2"
 
@@ -224,6 +227,7 @@ def test_evaluate_grit():
         replicate_groups=grit_compound_replicate_groups,
         operation="grit",
         grit_control_perts=grit_compound_control_perts,
+        grit_replicate_summary_method="mean",
     )
 
     top_result = (
