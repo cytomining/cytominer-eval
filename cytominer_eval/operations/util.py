@@ -197,6 +197,11 @@ def calculate_grit(
 
 
 def get_grit_entry(df: pd.DataFrame, col: str) -> str:
+    """Helper function to define the perturbation identifier of interest
+
+    Grit must be calculated using unique perturbations. This may or may not mean unique
+    perturbations.
+    """
     entries = df.loc[:, col]
     assert (
         len(entries.unique()) == 1
@@ -206,27 +211,66 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
 
 class MahalanobisEstimator:
     """
-    Store location and dispersion estimators of the
-    empirical distribution of data provided in an
-    array and allow computation of statistical
-    distances
+    Store location and dispersion estimators of the empirical distribution of data
+    provided in an array and allow computation of statistical distances.
+
+    Parameters
+    ----------
+    arr : {pandas.DataFrame, np.ndarray}
+        the matrix used to calculate covariance
+
+    Attributes
+    ----------
+    sigma : np.array
+        Fitted covariance matrix of sklearn.covariance.EmpiricalCovariance()
+
+    Methods
+    -------
+    mahalanobis(X)
+        Computes mahalanobis distance between the input array (self.arr) and the X
+        array as provided
     """
 
     def __init__(self, arr: Union[pd.DataFrame, np.ndarray]):
         self.sigma = EmpiricalCovariance().fit(arr)
 
     def mahalanobis(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
-        """
-        Compute the mahalanobis distance between
-        the empirical distribution described by
-        this object and points in an array `X`
+        """Compute the mahalanobis distance between the empirical distribution described
+        by this object and points in an array `X`.
+
+        Parameters
+        ----------
+        X : {pandas.DataFrame, np.ndarray}
+            A samples by features array-like matrix to compute mahalanobis distance
+            between self.arr
+
+        Returns
+        -------
+        numpy.array
+            Mahalanobis distance between the input array and the original sigma
         """
         return self.sigma.mahalanobis(X)
 
 
 def calculate_mahalanobis(pert_df: pd.DataFrame, control_df: pd.DataFrame) -> pd.Series:
-    """
-    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """Given perturbation and control dataframes, calculate mahalanobis distance per
+    perturbation
+
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply(). See
+    :py:func:`cytominer_eval.operations.util.calculate_mp_value`.
+
+    Parameters
+    ----------
+    pert_df : pandas.DataFrame
+        A pandas dataframe of replicate perturbations (samples by features)
+    control_df : pandas.DataFrame
+        A pandas dataframe of control perturbations (samples by features). Must have the
+        same feature measurements as pert_df
+
+    Returns
+    -------
+    float
+        The mahalanobis distance between perturbation and control
     """
     assert len(control_df) > 1, "Error! No control perturbations found."
 
@@ -241,13 +285,14 @@ def calculate_mahalanobis(pert_df: pd.DataFrame, control_df: pd.DataFrame) -> pd
 
 
 def default_mp_value_parameters():
-    """
-    Set the different default parameters used for mp-values.
+    """Set the different default parameters used for mp-values.
 
-    Output:
-    A dictionary with the following keys:
-    rescale_pca - whether the PCA should be scaled by variance explained
-    nb_permutations - how many permutations to do to get empirical p-value
+    Returns
+    -------
+    dict
+        A default parameter set with keys: rescale_pca (whether the PCA should be
+        scaled by variance explained) and nb_permutations (how many permutations to
+        calculate empirical p-value). Defaults to True and 100, respectively.
     """
     params = {"rescale_pca": True, "nb_permutations": 100}
     return params
@@ -258,13 +303,33 @@ def calculate_mp_value(
     control_df: pd.DataFrame,
     params: dict = {},
 ) -> pd.Series:
-    """
-    Usage: Designed to be called within a pandas.DataFrame().groupby().apply()
+    """Given perturbation and control dataframes, calculate mp-value per perturbation
+
+    Usage: Designed to be called within a pandas.DataFrame().groupby().apply(). See
+    :py:func:`cytominer_eval.operations.mp_value.mp_value`.
+
+    Parameters
+    ----------
+    pert_df : pandas.DataFrame
+        A pandas dataframe of replicate perturbations (samples by features)
+    control_df : pandas.DataFrame
+        A pandas dataframe of control perturbations (samples by features). Must have the
+        same feature measurements as pert_df
+    params : {dict}, optional
+        the parameters to use when calculating mp value. See
+        :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`.
+
+    Returns
+    -------
+    float
+        The mp value for the given perturbation
+
     """
     assert len(control_df) > 1, "Error! No control perturbations found."
 
     # Assign parameters
     p = default_mp_value_parameters()
+
     assert all(
         [x in p.keys() for x in params.keys()]
     ), "Unknown parameters provided. Only {e} are supported.".format(e=p.keys())
