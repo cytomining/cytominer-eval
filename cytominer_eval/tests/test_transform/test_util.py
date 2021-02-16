@@ -111,22 +111,29 @@ def test_set_pair_ids():
 
 
 def test_set_grit_column_info():
-    replicate_id = "test_replicate"
-    group_id = "test_group"
+    profile_col = "test_replicate"
+    replicate_group_col = "test_group"
 
-    result = set_grit_column_info(replicate_id=replicate_id, group_id=group_id)
+    result = set_grit_column_info(
+        profile_col=profile_col, replicate_group_col=replicate_group_col
+    )
 
-    assert result["replicate"]["id"] == "{rep}_pair_a".format(rep=replicate_id)
-    assert result["replicate"]["comparison"] == "{rep}_pair_b".format(rep=replicate_id)
-    assert result["group"]["id"] == "{group}_pair_a".format(group=group_id)
-    assert result["group"]["comparison"] == "{group}_pair_b".format(group=group_id)
+    assert result["profile"]["id"] == "{rep}_pair_a".format(rep=profile_col)
+    assert result["profile"]["comparison"] == "{rep}_pair_b".format(rep=profile_col)
+    assert result["group"]["id"] == "{group}_pair_a".format(group=replicate_group_col)
+    assert result["group"]["comparison"] == "{group}_pair_b".format(
+        group=replicate_group_col
+    )
 
 
 def test_check_replicate_groups():
     available_metrics = get_available_eval_metrics()
 
     replicate_groups = ["Metadata_gene_name", "Metadata_pert_name"]
-    replicate_group_dict = {"replicate_id": "testingA", "group_id": "testingB"}
+    replicate_group_dict = {
+        "profile_col": "testingA",
+        "replicate_group_col": "testingB",
+    }
     for operation in available_metrics:
         if operation == "grit":
             check_replicate_groups(

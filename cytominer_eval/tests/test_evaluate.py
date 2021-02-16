@@ -188,8 +188,8 @@ def test_evaluate_grit():
     ]
 
     grit_gene_replicate_groups = {
-        "replicate_id": "Metadata_pert_name",
-        "group_id": "Metadata_gene_name",
+        "profile_col": "Metadata_pert_name",
+        "replicate_group_col": "Metadata_gene_name",
     }
 
     grit_results_df = evaluate(
@@ -214,8 +214,8 @@ def test_evaluate_grit():
     assert top_result.perturbation == "PTK2-2"
 
     grit_compound_replicate_groups = {
-        "replicate_id": "Metadata_broad_sample",
-        "group_id": "Metadata_moa",
+        "profile_col": "Metadata_broad_sample",
+        "replicate_group_col": "Metadata_moa",
     }
 
     grit_compound_control_perts = ["DMSO"]

@@ -110,7 +110,7 @@ def check_replicate_groups(
             replicate_groups, dict
         ), "For grit, replicate_groups must be a dict"
 
-        replicate_key_ids = ["replicate_id", "group_id"]
+        replicate_key_ids = ["profile_col", "replicate_group_col"]
 
         assert all(
             [x in replicate_groups for x in replicate_key_ids]
@@ -129,28 +129,46 @@ def check_replicate_groups(
         )
 
 
-def set_grit_column_info(replicate_id: str, group_id: str) -> dict:
-    """
+def set_grit_column_info(profile_col: str, replicate_group_col: str) -> dict:
+    r"""Transform column names to be used in calculating grit
+
     In calculating grit, the data must have a metadata feature describing the core
-    replicate perturbation (replicate_id) and a separate metadata feature describing
-    the larger group (group_id) that the perturbation belongs to (e.g. gene, MOA)
+    replicate perturbation (profile_col) and a separate metadata feature(s) describing
+    the larger group (replicate_group_col) that the perturbation belongs to (e.g. gene,
+    MOA).
+
+    Parameters
+    ----------
+    profile_col : str
+        the metadata column storing profile ids. The column can have unique or replicate
+        identifiers.
+    replicate_group_col : str
+        the metadata column indicating a higher order structure (group) than the
+        profile column. E.g. target gene vs. guide in a CRISPR experiment.
+
+    Returns
+    -------
+    dict
+        A nested dictionary of renamed columns indicating how to determine replicates
     """
+    # Identify column transform names
     pair_ids = set_pair_ids()
 
-    replicate_id_with_suffix = [
-        "{col}{suf}".format(col=replicate_id, suf=pair_ids[x]["suffix"])
+    profile_id_with_suffix = [
+        "{col}{suf}".format(col=profile_col, suf=pair_ids[x]["suffix"])
         for x in pair_ids
     ]
 
     group_id_with_suffix = [
-        "{col}{suf}".format(col=group_id, suf=pair_ids[x]["suffix"]) for x in pair_ids
+        "{col}{suf}".format(col=replicate_group_col, suf=pair_ids[x]["suffix"])
+        for x in pair_ids
     ]
 
     col_info = ["id", "comparison"]
-    replicate_id_info = dict(zip(col_info, replicate_id_with_suffix))
+    profile_id_info = dict(zip(col_info, profile_id_with_suffix))
     group_id_info = dict(zip(col_info, group_id_with_suffix))
 
-    column_id_info = {"replicate": replicate_id_info, "group": group_id_info}
+    column_id_info = {"profile": profile_id_info, "group": group_id_info}
     return column_id_info
 
 
