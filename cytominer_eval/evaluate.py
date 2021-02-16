@@ -53,13 +53,17 @@ def evaluate(
         An important variable indicating which metadata columns denote replicate
         information. All metric operations require replicate profiles.
         `replicate_groups` indicates a str or list of columns to use. For
-        `operation="grit"`, `replicate_groups` is a dict with two keys: "replicate_id"
-        and "group_id". "replicate_id" is the column name that stores the unique
-        identifier for each profile, while "group_id" is the column name indicating
-        how replicates are defined. See also :py:func:`cytominer_eval.operations.grit`
-        and :py:func:`cytominer_eval.transform.util.check_replicate_groups`
+        `operation="grit"`, `replicate_groups` is a dict with two keys: "profile_col"
+        and "replicate_group_col". "profile_col" is the column name that stores
+        identifiers for each profile (can be unique), while "replicate_group_col" is the
+        column name indicating a higher order replicate information. E.g.
+        "replicate_group_col" can be a gene column in a CRISPR experiment with multiple
+        guides targeting the same genes. See also
+        :py:func:`cytominer_eval.operations.grit` and
+        :py:func:`cytominer_eval.transform.util.check_replicate_groups`.
     operation : {'replicate_reproducibility', 'precision_recall', 'grit', 'mp_value'}, optional
-        The specific evaluation metric to calculate. The default is "replicate_reproducibility".
+        The specific evaluation metric to calculate. The default is
+        "replicate_reproducibility".
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
         in pandas.DataFrame.cor(). The default is "pearson".
@@ -127,8 +131,8 @@ def evaluate(
         metric_result = grit(
             similarity_melted_df=similarity_melted_df,
             control_perts=grit_control_perts,
-            replicate_id=replicate_groups["replicate_id"],
-            group_id=replicate_groups["group_id"],
+            profile_col=replicate_groups["profile_col"],
+            replicate_group_col=replicate_groups["replicate_group_col"],
             replicate_summary_method=grit_replicate_summary_method,
         )
     elif operation == "mp_value":

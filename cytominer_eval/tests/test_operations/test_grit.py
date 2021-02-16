@@ -46,15 +46,17 @@ similarity_melted_df = metric_melt(
 )
 
 control_perts = ["Luc-2", "LacZ-2", "LacZ-3"]
-replicate_id = "Metadata_pert_name"
-group_id = "Metadata_gene_name"
+profile_col = "Metadata_pert_name"
+replicate_group_col = "Metadata_gene_name"
 
 pair_ids = set_pair_ids()
 replicate_col_name = "{x}{suf}".format(
-    x=replicate_id, suf=pair_ids[list(pair_ids)[0]]["suffix"]
+    x=profile_col, suf=pair_ids[list(pair_ids)[0]]["suffix"]
 )
 
-column_id_info = set_grit_column_info(replicate_id=replicate_id, group_id=group_id)
+column_id_info = set_grit_column_info(
+    profile_col=profile_col, replicate_group_col=replicate_group_col
+)
 
 
 def test_get_grit_entry():
@@ -73,7 +75,7 @@ def test_get_grit_entry():
 def test_calculate_grit():
     result = assign_replicates(
         similarity_melted_df=similarity_melted_df,
-        replicate_groups=[replicate_id, group_id],
+        replicate_groups=[profile_col, replicate_group_col],
     )
 
     assert_melt(result, eval_metric="grit")
@@ -132,8 +134,8 @@ def test_grit():
     result = grit(
         similarity_melted_df=similarity_melted_df,
         control_perts=control_perts,
-        replicate_id=replicate_id,
-        group_id=group_id,
+        profile_col=profile_col,
+        replicate_group_col=replicate_group_col,
     ).sort_values(by="grit")
 
     assert all([x in result.columns for x in ["perturbation", "group", "grit"]])
@@ -163,8 +165,8 @@ def test_grit_summary_metric():
     result = grit(
         similarity_melted_df=similarity_melted_df,
         control_perts=control_perts,
-        replicate_id=replicate_id,
-        group_id=group_id,
+        profile_col=profile_col,
+        replicate_group_col=replicate_group_col,
         replicate_summary_method="median",
     ).sort_values(by="grit")
 
@@ -188,8 +190,8 @@ def test_grit_summary_metric():
         output = grit(
             similarity_melted_df=similarity_melted_df,
             control_perts=control_perts,
-            replicate_id=replicate_id,
-            group_id=group_id,
+            profile_col=profile_col,
+            replicate_group_col=replicate_group_col,
             replicate_summary_method="fail",
         )
     assert "method not supported, use one of:" in str(ve.value)
