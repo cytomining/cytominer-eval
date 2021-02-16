@@ -6,22 +6,55 @@ from collections import OrderedDict
 
 
 def get_available_eval_metrics():
+    r"""Output the available eval metrics in the cytominer_eval library"""
     return ["replicate_reproducibility", "precision_recall", "grit", "mp_value"]
 
 
 def get_available_similarity_metrics():
+    r"""Output the available metrics for calculating pairwise similarity in the
+    cytominer_eval library
+    """
     return ["pearson", "kendall", "spearman"]
 
 
 def get_available_grit_summary_methods():
+    r"""Output the available metrics for calculating pairwise similarity in the
+    cytominer_eval library
+    """
     return ["mean", "median"]
 
 
 def get_upper_matrix(df: pd.DataFrame) -> np.array:
+    r"""Helper function to return only an upper matrix of the size of the input
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Any dataframe with a shape
+
+    Returns
+    -------
+    np.array
+        An upper triangle matrix the same shape as the input dataframe
+    """
     return np.triu(np.ones(df.shape), k=1).astype(bool)
 
 
 def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+    r"""Helper funtion to convert pandas column dtypes
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A pandas dataframe to convert columns
+    col_fix : {np.float64, np.str}, optional
+        A column type to convert the input dataframe.
+
+    Returns
+    -------
+    pd.DataFrame
+        A dataframe with converted columns
+    """
     try:
         df = df.astype(col_fix)
     except ValueError:
@@ -35,7 +68,20 @@ def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Da
 
 
 def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+    r"""Helper funtion to ensure pandas columns have compatible columns
 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A pandas dataframe to convert columns
+    col_fix : {np.float64, np.str}, optional
+        A column type to convert the input dataframe.
+
+    Returns
+    -------
+    pd.DataFrame
+        A dataframe with converted columns
+    """
     assert col_fix in [np.str, np.float64], "Only np.str and np.float64 are supported"
 
     df = convert_pandas_dtypes(df=df, col_fix=col_fix)
@@ -50,7 +96,19 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     return df
 
 
-def assert_eval_metric(eval_metric: str):
+def assert_eval_metric(eval_metric: str) -> None:
+    r"""Helper function to ensure that we support the input eval metric
+
+    Parameters
+    ----------
+    eval_metric : str
+        The user input eval metric
+
+    Returns
+    -------
+    None
+        Assertion will fail if we don't support the input eval metric
+    """
     avail_metrics = get_available_eval_metrics()
 
     assert (
@@ -63,7 +121,24 @@ def assert_eval_metric(eval_metric: str):
 def assert_melt(
     df: pd.DataFrame, eval_metric: str = "replicate_reproducibility"
 ) -> None:
+    r"""Helper function to ensure that we properly melted the pairwise correlation
+    matrix
 
+    Downstream functions depend on how we process the pairwise correlation matrix. The
+    processing is different depending on the evaluation metric.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A melted pairwise correlation matrix
+    eval_metric : str
+        The user input eval metric
+
+    Returns
+    -------
+    None
+        Assertion will fail if we incorrectly melted the matrix
+    """
     assert_eval_metric(eval_metric=eval_metric)
 
     pair_ids = set_pair_ids()
@@ -83,6 +158,13 @@ def assert_melt(
 
 
 def set_pair_ids():
+    r"""Helper function to ensure consistent melted pairiwise column names
+
+    Returns
+    -------
+    collections.OrderedDict
+        A length two dictionary of suffixes and indeces of two pairs.
+    """
     pair_a = "pair_a"
     pair_b = "pair_b"
 
@@ -101,8 +183,26 @@ def set_pair_ids():
 
 def check_replicate_groups(
     eval_metric: str, replicate_groups: Union[List[str], dict]
-) -> str:
+) -> None:
+    r"""Helper function checking that the user correctly constructed the input replicate
+    groups argument
 
+    The package will not calculate evaluation metrics with incorrectly constructed
+    replicate_groups. See :py:func:`cytominer_eval.evaluate.evaluate`.
+
+    Parameters
+    ----------
+    eval_metric : str
+        Which evaluation metric to calculate. See
+        :py:func:`cytominer_eval.transform.util.get_available_eval_metrics`.
+    replicate_groups : {list, dict}
+        The tentative data structure listing replicate groups
+
+    Returns
+    -------
+    None
+        Assertion will fail for improperly constructed replicate_groups
+    """
     assert_eval_metric(eval_metric=eval_metric)
 
     if eval_metric == "grit":
@@ -172,7 +272,19 @@ def set_grit_column_info(profile_col: str, replicate_group_col: str) -> dict:
     return column_id_info
 
 
-def check_grit_replicate_summary_method(replicate_summary_method: str):
+def check_grit_replicate_summary_method(replicate_summary_method: str) -> None:
+    r"""Helper function to ensure that we support the user input replicate summary
+
+    Parameters
+    ----------
+    replicate_summary_method : str
+        The user input replicate summary method
+
+    Returns
+    -------
+    None
+        Assertion will fail if the user inputs an incorrect replicate summary method
+    """
     avail_methods = get_available_grit_summary_methods()
 
     if replicate_summary_method not in avail_methods:
