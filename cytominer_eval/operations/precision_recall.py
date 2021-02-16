@@ -18,14 +18,22 @@ def precision_recall(
     """Determine the precision and recall at k for all unique replicate groups
     based on a predefined similarity metric (see cytominer_eval.transform.metric_melt)
 
-    Arguments:
-    similarity_melted_df - a long pandas dataframe output from transform.metric_melt
-    replicate_groups - a list of metadata column names in the original profile dataframe
-                       to use as replicate columns
-    k - an integer indicating how many pairwise comparisons to threshold
+    Parameters
+    ----------
+    similarity_melted_df : pandas.DataFrame
+        An elongated symmetrical matrix indicating pairwise correlations between
+        samples. Importantly, it must follow the exact structure as output from
+        :py:func:`cytominer_eval.transform.transform.metric_melt`.
+    replicate_groups : List
+        a list of metadata column names in the original profile dataframe to use as
+        replicate columns.
+    k : int
+        an integer indicating how many pairwise comparisons to threshold.
 
-    Output:
-    pandas DataFrame of precision and recall metrics for all replicate groups
+    Returns
+    -------
+    pandas.DataFrame
+        precision and recall metrics for all replicate groups given k
     """
     # Determine pairwise replicates and make sure to sort based on the metric!
     similarity_melted_df = assign_replicates(
