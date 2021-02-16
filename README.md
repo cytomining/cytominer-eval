@@ -1,7 +1,7 @@
 # Cytominer-eval: Evaluating quality of perturbation profiles
 
 [![Actions Status](https://github.com/cytomining/cytominer-eval/workflows/Python%20build/badge.svg)](https://github.com/cytomining/cytominer-eval/actions)
-[![Documentation Status](https://readthedocs.org/projects/cytominer-eval/badge/?version=latest)](https://cytominer-eval.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/cytominer-eval/badge/?version=latest)](https://cytominer-eval.readthedocs.io/en/latest/)
 [![Coverage Status](https://codecov.io/gh/cytomining/cytominer-eval/branch/master/graph/badge.svg)](https://codecov.io/github/cytomining/cytominer-eval?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -9,17 +9,17 @@ Cytominer-eval contains functions to calculate quality metrics for perturbation 
 
 ## Installation
 
-Cytominer-eval is still in beta, and can only be installed from GitHub:
+Cytominer-eval can be installed via pip:
 
 ```bash
-pip install git+git://github.com/cytomining/cytominer-eval
+pip install cytominer-eval
 ```
 
-Since the project is actively being developed, with new features added regularly, we recommend installation using a hash:
+Since the project is actively being developed, to get up to date functionality, you can also install via github commit hash:
 
 ```bash
-# Example:
-pip install git+git://github.com/cytomining/cytominer-eval@5c9fb860d1b27e746ee498d625d033475caceb7e
+# Example
+pip install git+git://github.com/cytomining/cytominer-eval@f7f5b293da54d870e8ba86bacf7dbc874bb79565
 ```
 
 ## Usage
