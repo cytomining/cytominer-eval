@@ -14,7 +14,7 @@ def get_available_similarity_metrics():
     r"""Output the available metrics for calculating pairwise similarity in the
     cytominer_eval library
     """
-    return ["pearson", "kendall", "spearman"]
+    return ["pearson", "kendall", "spearman", "euclidean"]
 
 
 def get_available_grit_summary_methods():
