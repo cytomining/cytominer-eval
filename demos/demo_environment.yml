@@ -1,0 +1,22 @@
+name: cytominer-eval-demo
+channels:
+- conda-forge
+dependencies:
+- conda-forge::python=3.7
+- conda-forge::pandas=1.2.0
+- conda-forge::numpy
+- conda-forge::scikit-learn
+- conda-forge::umap-learn
+- conda-forge::matplotlib
+- conda-forge::seaborn
+- conda-forge::plotnine
+- conda-forge::jupyter
+- conda-forge::jupyterlab
+- conda-forge::ipykernel
+- conda-forge::nb_conda_kernels
+- conda-forge::simplegeneric
+- conda-forge::pytest
+- conda-forge::black
+- pip:
+  - cytominer_eval==0.1
+  - git+https://github.com/cytomining/pycytominer@282966b24bb5c6ac5150fad9deba16156c83a826
