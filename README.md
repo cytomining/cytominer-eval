@@ -62,3 +62,7 @@ Currently, four metric operations are supported:
 2. Precision/recall
 3. mp-value
 4. Grit
+
+## Demos
+
+For a more in depth tutorial, https://github.com/cytomining/cytominer-eval/demos
