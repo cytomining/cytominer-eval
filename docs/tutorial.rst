@@ -1,4 +1,4 @@
 Tutorial
 ========
 
-See https://github.com/cytomining/cytominer-eval/demos for detailed examples.
+See https://github.com/cytomining/cytominer-eval/tree/master/demos for detailed examples.

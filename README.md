@@ -65,4 +65,4 @@ Currently, four metric operations are supported:
 
 ## Demos
 
-For a more in depth tutorial, https://github.com/cytomining/cytominer-eval/demos
+For more in depth tutorials, see https://github.com/cytomining/cytominer-eval/tree/master/demos.
