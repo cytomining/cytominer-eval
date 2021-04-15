@@ -14,6 +14,7 @@ from cytominer_eval.operations import (
     precision_recall,
     grit,
     mp_value,
+    enrichment,
 )
 
 
@@ -30,6 +31,7 @@ def evaluate(
     grit_control_perts: List[str] = ["None"],
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
+    percentile: float = 0.5,
 ):
     r"""Evaluate profile quality and strength.
 
@@ -99,6 +101,9 @@ def evaluate(
         Only used when `operation='mp_value'`. A key, item pair of optional parameters
         for calculating mp value. See also
         :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
+    percentile : float, optional
+        Only used when `operation='enrichment'`. Determines what percentage of top connections
+        used for the enrichment calculation. See also
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -143,5 +148,11 @@ def evaluate(
             features=features,
             params=mp_value_params,
         )
+    elif operation == "enrichment":
+        metric_result = enrichment(
+            similarity_melted_df=similarity_melted_df,
+            replicate_groups=replicate_groups,
+            percentile=percentile,
+    )
 
     return metric_result
