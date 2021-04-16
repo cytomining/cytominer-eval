@@ -14,9 +14,7 @@ from cytominer_eval.transform.util import (
 
 
 def enrichment(
-    similarity_melted_df: pd.DataFrame,
-    replicate_groups: List[str],
-    percentile: float,
+    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: float,
 ) -> dict:
     """Calculate the enrichment score.
 
@@ -44,15 +42,36 @@ def enrichment(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
     )
     # calculate the individual components of the contingency tables
-    v11 = len(replicate_truth_df.query("group_replicate==True and similarity_metric>@threshold"))
-    v12 = len(replicate_truth_df.query("group_replicate==False and similarity_metric>@threshold"))
-    v21 = len(replicate_truth_df.query("group_replicate==True and similarity_metric<=@threshold"))
-    v22 = len(replicate_truth_df.query("group_replicate==False and similarity_metric<=@threshold"))
+    v11 = len(
+        replicate_truth_df.query(
+            "group_replicate==True and similarity_metric>@threshold"
+        )
+    )
+    v12 = len(
+        replicate_truth_df.query(
+            "group_replicate==False and similarity_metric>@threshold"
+        )
+    )
+    v21 = len(
+        replicate_truth_df.query(
+            "group_replicate==True and similarity_metric<=@threshold"
+        )
+    )
+    v22 = len(
+        replicate_truth_df.query(
+            "group_replicate==False and similarity_metric<=@threshold"
+        )
+    )
 
     V = np.asarray([[v11, v12], [v21, v22]])
-    #print(percentile, threshold)
-    #print(V, np.sum(V))
+    # print(percentile, threshold)
+    # print(V, np.sum(V))
     r = scipy.stats.fisher_exact(V, alternative="greater")
-    result = {"percentile": percentile, "threshold": threshold, "ods_ratio": r[0], "p-value": r[1]}
-    #df = pd.DataFrame(data=d)
+    result = {
+        "percentile": percentile,
+        "threshold": threshold,
+        "ods_ratio": r[0],
+        "p-value": r[1],
+    }
+    # df = pd.DataFrame(data=d)
     return result

@@ -14,8 +14,10 @@ from cytominer_eval.operations import (
     precision_recall,
     grit,
     mp_value,
-    enrichment,
 )
+
+# no idea why I need to do this, but otherwise it would give the module object error
+from cytominer_eval.operations.enrichment import enrichment
 
 
 def evaluate(
@@ -103,7 +105,7 @@ def evaluate(
         :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
     percentile : float, optional
         Only used when `operation='enrichment'`. Determines what percentage of top connections
-        used for the enrichment calculation. See also
+        used for the enrichment calculation.
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -153,6 +155,6 @@ def evaluate(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
             percentile=percentile,
-    )
+        )
 
     return metric_result
