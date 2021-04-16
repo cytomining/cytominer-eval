@@ -14,9 +14,8 @@ from cytominer_eval.operations import (
     precision_recall,
     grit,
     mp_value,
+    enrichment,
 )
-# no idea why I need to do this, but otherwise it would give the module object error
-from cytominer_eval.operations.enrichment import enrichment
 
 
 def evaluate(

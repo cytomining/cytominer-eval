@@ -1,11 +1,16 @@
-"""Function to calculate the enrichtment score for a given similarity matrix.
+"""Enrichtment
 """
 import numpy as np
 import pandas as pd
 from typing import List
 import scipy
 
-from .util import assign_replicates, calculate_precision_recall
+from .util import assign_replicates, calculate_grit, check_grit_replicate_summary_method
+from cytominer_eval.transform.util import (
+    set_pair_ids,
+    set_grit_column_info,
+    assert_melt,
+)
 
 
 def enrichment(
@@ -13,11 +18,10 @@ def enrichment(
     replicate_groups: List[str],
     percentile: float,
 ) -> dict:
-    """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
-    This score effectively calculates how much better the distribution of correct connections is from a random sample.
+    """Calculate the enrichment score.
 
     Parameters
-    ----------x`
+    ----------
     similarity_melted_df : pandas.DataFrame
         An elongated symmetrical matrix indicating pairwise correlations between
         samples. Importantly, it must follow the exact structure as output from
@@ -30,24 +34,25 @@ def enrichment(
 
     Returns
     -------
-    dict
+    pandas.DataFrame
         percentile, threshold, ods ration and p value
     """
     # threshold based on percentile of top connections
     threshold = similarity_melted_df.similarity_metric.quantile(percentile)
 
-    # adds the column of replicate truth to the elongated similarity df
     replicate_truth_df = assign_replicates(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
     )
     # calculate the individual components of the contingency tables
-    c11 = len(replicate_truth_df.query("group_replicate==True and similarity_metric>@threshold"))
-    c12 = len(replicate_truth_df.query("group_replicate==False and similarity_metric>@threshold"))
-    c21 = len(replicate_truth_df.query("group_replicate==True and similarity_metric<=@threshold"))
-    c22 = len(replicate_truth_df.query("group_replicate==False and similarity_metric<=@threshold"))
+    v11 = len(replicate_truth_df.query("group_replicate==True and similarity_metric>@threshold"))
+    v12 = len(replicate_truth_df.query("group_replicate==False and similarity_metric>@threshold"))
+    v21 = len(replicate_truth_df.query("group_replicate==True and similarity_metric<=@threshold"))
+    v22 = len(replicate_truth_df.query("group_replicate==False and similarity_metric<=@threshold"))
 
-    # arrange values into the table and calculate the fisher scores.
-    contingency_table = np.asarray([[c11, c12], [c21, c22]])
-    r = scipy.stats.fisher_exact(contingency_table, alternative="greater")
+    V = np.asarray([[v11, v12], [v21, v22]])
+    #print(percentile, threshold)
+    #print(V, np.sum(V))
+    r = scipy.stats.fisher_exact(V, alternative="greater")
     result = {"percentile": percentile, "threshold": threshold, "ods_ratio": r[0], "p-value": r[1]}
+    #df = pd.DataFrame(data=d)
     return result
