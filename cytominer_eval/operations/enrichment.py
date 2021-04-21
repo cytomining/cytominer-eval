@@ -1,4 +1,4 @@
-"""Function to calculate the enrichtment score for a given similarity matrix.
+"""Function to calculate the enrichment score for a given similarity matrix.
 """
 import numpy as np
 import pandas as pd
