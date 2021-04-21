@@ -14,11 +14,8 @@ from cytominer_eval.operations import (
     precision_recall,
     grit,
     mp_value,
+    enrichment,
 )
-
-# no idea why I need to do this, but otherwise it would give the module object error
-from cytominer_eval.operations.enrichment import enrichment
-
 
 def evaluate(
     profiles: pd.DataFrame,
@@ -33,7 +30,7 @@ def evaluate(
     grit_control_perts: List[str] = ["None"],
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
-    percentile: float = 0.5,
+    enrichment_percentile: float = 0.5,
 ):
     r"""Evaluate profile quality and strength.
 
@@ -154,7 +151,7 @@ def evaluate(
         metric_result = enrichment(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
-            percentile=percentile,
+            percentile=enrichment_percentile,
         )
 
     return metric_result
