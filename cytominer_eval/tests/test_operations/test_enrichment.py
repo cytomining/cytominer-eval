@@ -60,7 +60,3 @@ def test_enrichment():
     assert result_df.percentile[0] == 1.0
     # check if the higher percentiles are larger than the small one
     assert result_df.percentile[1] > result_df.percentile.iloc[-1]
-
-
-
-#test_enrichment()
