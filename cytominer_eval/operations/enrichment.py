@@ -34,7 +34,7 @@ def enrichment(
     Returns
     -------
     pandas.DataFrame
-        percentile, threshold, ods ration and p value
+        percentile, threshold, odds ratio and p value
     """
     # threshold based on percentile of top connections
     threshold = similarity_melted_df.similarity_metric.quantile(percentile)
