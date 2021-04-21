@@ -17,7 +17,7 @@ def enrichment(
     similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: float,
 ) -> dict:
     """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
-    This score effectively calculates how much better the distribution of correct connections is from a random sample.
+    This score effectively calculates how much better the distribution of correct connections is compared to random.
 
     Parameters
     ----------
