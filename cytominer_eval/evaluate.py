@@ -101,7 +101,7 @@ def evaluate(
         for calculating mp value. See also
         :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
     percentile : float, optional
-        Only used when `operation='enrichment'`. Determines what percentage of top connections
+        Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
     """
     # Check replicate groups input
