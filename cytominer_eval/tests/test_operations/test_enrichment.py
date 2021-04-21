@@ -38,6 +38,8 @@ similarity_melted_df = metric_melt(
     similarity_metric="pearson",
     eval_metric="enrichment",
 )
+
+
 def test_enrichment():
     result = []
     for p in np.arange(1, 0.97, -0.005):
