@@ -33,7 +33,7 @@ def enrichment(
 
     Returns
     -------
-    pandas.DataFrame
+    dict
         percentile, threshold, odds ratio and p value
     """
     # threshold based on percentile of top connections
