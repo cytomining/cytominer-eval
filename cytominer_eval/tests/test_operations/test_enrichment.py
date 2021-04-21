@@ -6,17 +6,9 @@ import tempfile
 import numpy as np
 import pandas as pd
 
-# path = os.getcwd()
-# print(path)
-# import sys
-# sys.path.insert(0, "../../")
-# print(os.environ['PYTHONPATH'])
-
-
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations.enrichment import enrichment
 
-from pycytominer.cyto_utils import infer_cp_features
 
 random.seed(3141)
 tmpdir = tempfile.gettempdir()
@@ -32,8 +24,10 @@ example_file = pathlib.Path(
 
 df = pd.read_csv(example_file)
 
-features = infer_cp_features(df)
-meta_features = infer_cp_features(df, metadata=True)
+meta_features = [
+    x for x in df.columns if (x.startswith("Metadata_") or x.startswith("Image_"))
+]
+features = df.drop(meta_features, axis="columns").columns.tolist()
 
 replicate_groups = ["Metadata_broad_sample"]
 
