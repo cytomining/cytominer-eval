@@ -1,4 +1,4 @@
-"""Function to calculate the enrichtment score for a given similarity matrix.
+"""Function to calculate the enrichment score for a given similarity matrix.
 """
 import numpy as np
 import pandas as pd
@@ -17,7 +17,7 @@ def enrichment(
     similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: 0.9,
 ) -> dict:
     """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
-    This score effectively calculates how much better the distribution of correct connections is from a random sample.
+    This score effectively calculates how much better the distribution of correct connections is compared to random.
 
     Parameters
     ----------
@@ -33,8 +33,8 @@ def enrichment(
 
     Returns
     -------
-    pandas.DataFrame
-        percentile, threshold, ods ration and p value
+    dict
+        percentile, threshold, odds ratio and p value
     """
     # threshold based on percentile of top connections
     threshold = similarity_melted_df.similarity_metric.quantile(percentile)
