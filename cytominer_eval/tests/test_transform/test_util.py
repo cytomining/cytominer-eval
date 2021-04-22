@@ -41,6 +41,7 @@ def test_get_available_eval_metrics():
         "precision_recall",
         "grit",
         "mp_value",
+        "enrichment"
     ]
     assert expected_result == get_available_eval_metrics()
 
