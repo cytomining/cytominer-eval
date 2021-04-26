@@ -11,9 +11,7 @@ from cytominer_eval.transform.util import set_pair_ids, assert_melt
 
 
 def precision_recall(
-    similarity_melted_df: pd.DataFrame,
-    replicate_groups: List[str],
-    k_list: List[int],
+    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], k_list: List[int],
 ) -> pd.DataFrame:
     """Determine the precision and recall at k for all unique replicate groups
     based on a predefined similarity metric (see cytominer_eval.transform.metric_melt)
@@ -53,9 +51,9 @@ def precision_recall(
     precision_recall_df = pd.DataFrame()
     for k in k_list:
         # Calculate precision and recall for all groups
-        precision_recall_df_at_k = similarity_melted_df.groupby(replicate_group_cols).apply(
-            lambda x: calculate_precision_recall(x, k=k)
-            )
+        precision_recall_df_at_k = similarity_melted_df.groupby(
+            replicate_group_cols
+        ).apply(lambda x: calculate_precision_recall(x, k=k))
         precision_recall_df = precision_recall_df.append(precision_recall_df_at_k)
 
     # Rename the columns back to the replicate groups provided
