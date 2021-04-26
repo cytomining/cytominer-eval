@@ -14,7 +14,9 @@ from cytominer_eval.transform.util import (
 
 
 def enrichment(
-    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: List[float],
+    similarity_melted_df: pd.DataFrame,
+    replicate_groups: List[str],
+    percentile: List[float],
 ) -> dict:
     """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
     This score effectively calculates how much better the distribution of correct connections is compared to random.
@@ -69,11 +71,13 @@ def enrichment(
 
         v = np.asarray([[v11, v12], [v21, v22]])
         r = scipy.stats.fisher_exact(v, alternative="greater")
-        result.append({
-            "enrichment_percentile": p,
-            "threshold": threshold,
-            "ods_ratio": r[0],
-            "p-value": r[1],
-        })
+        result.append(
+            {
+                "enrichment_percentile": p,
+                "threshold": threshold,
+                "ods_ratio": r[0],
+                "p-value": r[1],
+            }
+        )
     result_df = pd.DataFrame(result)
     return result_df
