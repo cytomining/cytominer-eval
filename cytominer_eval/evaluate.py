@@ -26,11 +26,11 @@ def evaluate(
     similarity_metric: str = "pearson",
     replicate_reproducibility_quantile: np.float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
-    precision_recall_k: int = 10,
+    precision_recall_k: List[int] = [5,10],
     grit_control_perts: List[str] = ["None"],
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
-    enrichment_percentile: float = 0.5,
+    enrichment_percentile: List[float] = [0.99, 0.98],
 ):
     r"""Evaluate profile quality and strength.
 
@@ -148,6 +148,7 @@ def evaluate(
             params=mp_value_params,
         )
     elif operation == "enrichment":
+        print(enrichment_percentile)
         metric_result = enrichment(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,

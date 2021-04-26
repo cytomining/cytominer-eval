@@ -14,7 +14,7 @@ from cytominer_eval.transform.util import (
 
 
 def enrichment(
-    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: 0.9,
+    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], percentile: List[float],
 ) -> dict:
     """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
     This score effectively calculates how much better the distribution of correct connections is compared to random.
@@ -28,7 +28,7 @@ def enrichment(
     replicate_groups : List
         a list of metadata column names in the original profile dataframe to use as
         replicate columns.
-    percentile :  float
+    enrichment_percentile :  List of floats
         Determines what percentage of top connections used for the enrichment calculation.
 
     Returns
@@ -36,40 +36,45 @@ def enrichment(
     dict
         percentile, threshold, odds ratio and p value
     """
-    # threshold based on percentile of top connections
-    threshold = similarity_melted_df.similarity_metric.quantile(percentile)
-
+    print('here')
+    result = []
     replicate_truth_df = assign_replicates(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
     )
-    # calculate the individual components of the contingency tables
-    v11 = len(
-        replicate_truth_df.query(
-            "group_replicate==True and similarity_metric>@threshold"
-        )
-    )
-    v12 = len(
-        replicate_truth_df.query(
-            "group_replicate==False and similarity_metric>@threshold"
-        )
-    )
-    v21 = len(
-        replicate_truth_df.query(
-            "group_replicate==True and similarity_metric<=@threshold"
-        )
-    )
-    v22 = len(
-        replicate_truth_df.query(
-            "group_replicate==False and similarity_metric<=@threshold"
-        )
-    )
+    # loop over all percentiles
+    for p in percentile:
+        # threshold based on percentile of top connections
+        threshold = similarity_melted_df.similarity_metric.quantile(p)
 
-    v = np.asarray([[v11, v12], [v21, v22]])
-    r = scipy.stats.fisher_exact(v, alternative="greater")
-    result = {
-        "percentile": percentile,
-        "threshold": threshold,
-        "ods_ratio": r[0],
-        "p-value": r[1],
-    }
-    return result
+        # calculate the individual components of the contingency tables
+        v11 = len(
+            replicate_truth_df.query(
+                "group_replicate==True and similarity_metric>@threshold"
+            )
+        )
+        v12 = len(
+            replicate_truth_df.query(
+                "group_replicate==False and similarity_metric>@threshold"
+            )
+        )
+        v21 = len(
+            replicate_truth_df.query(
+                "group_replicate==True and similarity_metric<=@threshold"
+            )
+        )
+        v22 = len(
+            replicate_truth_df.query(
+                "group_replicate==False and similarity_metric<=@threshold"
+            )
+        )
+
+        v = np.asarray([[v11, v12], [v21, v22]])
+        r = scipy.stats.fisher_exact(v, alternative="greater")
+        result.append({
+            "enrichment_percentile": p,
+            "threshold": threshold,
+            "ods_ratio": r[0],
+            "p-value": r[1],
+        })
+    result_df = pd.DataFrame(result)
+    return result_df
