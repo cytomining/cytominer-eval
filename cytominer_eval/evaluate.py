@@ -148,7 +148,6 @@ def evaluate(
             params=mp_value_params,
         )
     elif operation == "enrichment":
-        print(enrichment_percentile)
         metric_result = enrichment(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,

@@ -36,7 +36,6 @@ def enrichment(
     dict
         percentile, threshold, odds ratio and p value
     """
-    print('here')
     result = []
     replicate_truth_df = assign_replicates(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
