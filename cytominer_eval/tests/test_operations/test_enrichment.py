@@ -42,25 +42,22 @@ similarity_melted_df = metric_melt(
 
 
 def test_enrichment():
-    result = []
-    for p in np.arange(1, 0.97, -0.005):
-        r = enrichment(
-            similarity_melted_df=similarity_melted_df,
-            replicate_groups=replicate_groups,
-            percentile=p,
-        )
-        result.append(r)
-    result_df = pd.DataFrame(result)
+    percent_list = np.arange(1, 0.97, -0.005)
+    result = enrichment(
+        similarity_melted_df=similarity_melted_df,
+        replicate_groups=replicate_groups,
+        percentile=percent_list,
+    )
 
     # check for correct shape and starts with 1.0
-    assert result_df.shape == (7, 4)
-    assert result_df.percentile[0] == 1.0
+    assert result.shape == (7, 4)
+    assert result.enrichment_percentile[0] == 1.0
     # check if the higher percentiles are larger than the small one
-    assert result_df.percentile[1] > result_df.percentile.iloc[-1]
+    assert result.enrichment_percentile[1] > result.enrichment_percentile.iloc[-1]
 
 
 def test_compare_functions():
-    percentile = 0.9
+    percent_list = [0.95, 0.9]
     eval_res = evaluate(
         profiles=df,
         features=features,
@@ -68,11 +65,11 @@ def test_compare_functions():
         replicate_groups=replicate_groups,
         operation="enrichment",
         similarity_metric="pearson",
-        enrichment_percentile=percentile,
+        enrichment_percentile=percent_list,
     )
     enr_res = enrichment(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
-        percentile=percentile,
+        percentile=percent_list,
     )
-    assert enr_res == eval_res
+    assert enr_res.equals(eval_res)
