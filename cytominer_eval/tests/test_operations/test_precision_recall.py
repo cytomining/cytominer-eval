@@ -42,11 +42,11 @@ def test_precision_recall():
     result = precision_recall(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
-        k=10,
+        k_list=[5, 10]
     )
 
-    assert len(result.k.unique()) == 1
-    assert result.k.unique()[0] == 10
+    assert len(result.k.unique()) == 2
+    assert result.k.unique()[0] == 5
 
     # ITGAV has a really strong profile
     assert (

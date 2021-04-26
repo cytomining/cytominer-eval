@@ -130,7 +130,7 @@ def evaluate(
         metric_result = precision_recall(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
-            k=precision_recall_k,
+            k_list=precision_recall_k,
         )
     elif operation == "grit":
         metric_result = grit(
