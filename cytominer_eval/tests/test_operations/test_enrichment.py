@@ -52,7 +52,7 @@ def test_enrichment():
     # check for correct shape and starts with 1.0
     assert result.shape == (7, 4)
     assert result.enrichment_percentile[0] == 1.0
-    assert result.enrichment_percentile[0] == 0.995
+    assert result.enrichment_percentile[1] == 0.995
     # check if the higher percentiles are larger than the small one
     assert result.enrichment_percentile[1] > result.enrichment_percentile.iloc[-1]
 
