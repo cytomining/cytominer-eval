@@ -4,14 +4,14 @@ Functions to calculate precision and recall at a given k
 
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Union
 
 from .util import assign_replicates, calculate_precision_recall
 from cytominer_eval.transform.util import set_pair_ids, assert_melt
 
 
 def precision_recall(
-    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], k_list: List[int],
+    similarity_melted_df: pd.DataFrame, replicate_groups: List[str], k: Union[int, List[int]],
 ) -> pd.DataFrame:
     """Determine the precision and recall at k for all unique replicate groups
     based on a predefined similarity metric (see cytominer_eval.transform.metric_melt)
@@ -25,7 +25,7 @@ def precision_recall(
     replicate_groups : List
         a list of metadata column names in the original profile dataframe to use as
         replicate columns.
-    k_list : List of ints
+    k : List of ints or int
         an integer indicating how many pairwise comparisons to threshold.
 
     Returns
@@ -49,11 +49,13 @@ def precision_recall(
     ]
     # iterate over all k
     precision_recall_df = pd.DataFrame()
-    for k in k_list:
+    if type(k) == int:
+        k = [k]
+    for k_ in k:
         # Calculate precision and recall for all groups
         precision_recall_df_at_k = similarity_melted_df.groupby(
             replicate_group_cols
-        ).apply(lambda x: calculate_precision_recall(x, k=k))
+        ).apply(lambda x: calculate_precision_recall(x, k=k_))
         precision_recall_df = precision_recall_df.append(precision_recall_df_at_k)
 
     # Rename the columns back to the replicate groups provided

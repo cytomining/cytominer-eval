@@ -2,7 +2,7 @@
 """
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Union
 import scipy
 
 from .util import assign_replicates, calculate_grit, check_grit_replicate_summary_method
@@ -16,7 +16,7 @@ from cytominer_eval.transform.util import (
 def enrichment(
     similarity_melted_df: pd.DataFrame,
     replicate_groups: List[str],
-    percentile: List[float],
+    percentile: Union[int, List[int]],
 ) -> pd.DataFrame:
     """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
     This score effectively calculates how much better the distribution of correct connections is compared to random.
@@ -43,6 +43,8 @@ def enrichment(
         similarity_melted_df=similarity_melted_df, replicate_groups=replicate_groups
     )
     # loop over all percentiles
+    if type(percentile) == float:
+        percentile = [percentile]
     for p in percentile:
         # threshold based on percentile of top connections
         threshold = similarity_melted_df.similarity_metric.quantile(p)
