@@ -42,7 +42,7 @@ def test_precision_recall():
     result = precision_recall(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
-        k_list=[5, 10],
+        k=[5, 10],
     )
 
     assert len(result.k.unique()) == 2
