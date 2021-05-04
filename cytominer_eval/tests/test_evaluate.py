@@ -137,7 +137,7 @@ def test_evaluate_precision_recall():
             replicate_groups=gene_groups,
             operation="precision_recall",
             similarity_metric="pearson",
-            precision_recall_k=[k],
+            precision_recall_k=k,
         )
 
         assert (
