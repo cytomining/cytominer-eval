@@ -31,7 +31,7 @@ def evaluate(
     grit_control_perts: List[str] = ["None"],
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
-    enrichment_percentile: Union[int, List[int]] = 0.99,
+    enrichment_percentile: Union[float, List[float]] = 0.99,
 ):
     r"""Evaluate profile quality and strength.
 
