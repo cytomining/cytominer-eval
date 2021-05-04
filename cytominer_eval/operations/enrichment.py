@@ -30,7 +30,7 @@ def enrichment(
     replicate_groups : List
         a list of metadata column names in the original profile dataframe to use as
         replicate columns.
-    enrichment_percentile :  List of floats
+    percentile :  List of floats
         Determines what percentage of top connections used for the enrichment calculation.
 
     Returns
