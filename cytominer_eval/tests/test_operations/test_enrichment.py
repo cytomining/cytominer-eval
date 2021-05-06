@@ -62,7 +62,7 @@ def test_enrichment():
         percentile=0.97,
     )
     
-    assert result_int.enrichment_percentile[0] == result.enrichment_percentile[1]
+    assert result_int.enrichment_percentile[0] == result.enrichment_percentile.iloc[-1]
 
 
 def test_compare_functions():
