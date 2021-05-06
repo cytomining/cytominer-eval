@@ -130,6 +130,7 @@ def test_evaluate_precision_recall():
 
     for k in ks:
 
+        # first test the function with k = float, later we test with k = list of floats
         result = evaluate(
             profiles=gene_profiles,
             features=gene_features,
@@ -148,7 +149,7 @@ def test_evaluate_precision_recall():
             result.query("recall == 1").shape[0]
             == expected_result["gene"]["recall"][str(k)]
         )
-
+        # test function with argument k = list of floats, should give same result as above
         result = evaluate(
             profiles=compound_profiles,
             features=compound_features,
