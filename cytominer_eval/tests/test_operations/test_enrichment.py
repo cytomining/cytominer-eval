@@ -55,6 +55,14 @@ def test_enrichment():
     assert result.enrichment_percentile[1] == 0.995
     # check if the higher percentiles are larger than the small one
     assert result.enrichment_percentile[1] > result.enrichment_percentile.iloc[-1]
+    
+    result_int = enrichment(
+        similarity_melted_df=similarity_melted_df,
+        replicate_groups=replicate_groups,
+        percentile=0.97,
+    )
+    
+    assert result_int.enrichment_percentile[0] == result.enrichment_percentile[1]
 
 
 def test_compare_functions():
