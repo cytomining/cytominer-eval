@@ -101,7 +101,7 @@ def evaluate(
         Only used when `operation='mp_value'`. A key, item pair of optional parameters
         for calculating mp value. See also
         :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
-    percentile : float or list of floats, optional
+    enrichment_percentile : float or list of floats, optional
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
     """
