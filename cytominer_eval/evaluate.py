@@ -17,6 +17,7 @@ from cytominer_eval.operations import (
     enrichment,
 )
 
+
 def evaluate(
     profiles: pd.DataFrame,
     features: List[str],
@@ -26,11 +27,11 @@ def evaluate(
     similarity_metric: str = "pearson",
     replicate_reproducibility_quantile: np.float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
-    precision_recall_k: int = 10,
+    precision_recall_k: Union[int, List[int]] = 10,
     grit_control_perts: List[str] = ["None"],
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
-    enrichment_percentile: float = 0.5,
+    enrichment_percentile: Union[float, List[float]] = 0.99,
 ):
     r"""Evaluate profile quality and strength.
 
@@ -85,7 +86,7 @@ def evaluate(
         Only used when `operation='replicate_reproducibility'`. If True, then also
         return pairwise correlations as defined by replicate_groups and
         similarity metric
-    precision_recall_k : {10, ...}, optional
+    precision_recall_k : int or list of ints {10, ...}, optional
         Only used when `operation='precision_recall'`. Used to calculate precision and
         recall considering the top k profiles according to pairwise similarity.
     grit_control_perts : {None, ...}, optional
@@ -100,7 +101,7 @@ def evaluate(
         Only used when `operation='mp_value'`. A key, item pair of optional parameters
         for calculating mp value. See also
         :py:func:`cytominer_eval.operations.util.default_mp_value_parameters`
-    percentile : float, optional
+    enrichment_percentile : float or list of floats, optional
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
     """

@@ -111,11 +111,7 @@ def test_evaluate_replicate_reprod_return_cor_true():
 
     assert np.round(med_cor_df.similarity_metric.max(), 3) == 0.949
     assert sorted(med_cor_df.columns.tolist()) == sorted(
-        [
-            "Metadata_gene_name",
-            "Metadata_pert_name",
-            "similarity_metric",
-        ]
+        ["Metadata_gene_name", "Metadata_pert_name", "similarity_metric",]
     )
 
 
@@ -134,6 +130,7 @@ def test_evaluate_precision_recall():
 
     for k in ks:
 
+        # first test the function with k = float, later we test with k = list of floats
         result = evaluate(
             profiles=gene_profiles,
             features=gene_features,
@@ -152,7 +149,7 @@ def test_evaluate_precision_recall():
             result.query("recall == 1").shape[0]
             == expected_result["gene"]["recall"][str(k)]
         )
-
+        # test function with argument k = list of floats, should give same result as above
         result = evaluate(
             profiles=compound_profiles,
             features=compound_features,
@@ -160,7 +157,7 @@ def test_evaluate_precision_recall():
             replicate_groups=["Metadata_broad_sample"],
             operation="precision_recall",
             similarity_metric="pearson",
-            precision_recall_k=k,
+            precision_recall_k=[k],
         )
 
         assert (
@@ -205,9 +202,7 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[
-            0,
-        ]
+        .iloc[0,]
     )
     assert np.round(top_result.grit, 4) == 2.3352
     assert top_result.group == "PTK2"
@@ -233,9 +228,7 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[
-            0,
-        ]
+        .iloc[0,]
     )
 
     assert np.round(top_result.grit, 4) == 0.9990

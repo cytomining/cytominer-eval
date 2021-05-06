@@ -39,22 +39,30 @@ replicate_groups = ["Metadata_gene_name", "Metadata_cell_line"]
 
 
 def test_precision_recall():
-    result = precision_recall(
+    result_list = precision_recall(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
-        k=10,
+        k=[5, 10],
     )
 
-    assert len(result.k.unique()) == 1
-    assert result.k.unique()[0] == 10
+    result_int = precision_recall(
+        similarity_melted_df=similarity_melted_df,
+        replicate_groups=replicate_groups,
+        k=5,
+    )
+
+    assert len(result_list.k.unique()) == 2
+    assert result_list.k.unique()[0] == 5
 
     # ITGAV has a really strong profile
     assert (
-        result.sort_values(by="recall", ascending=False)
+        result_list.sort_values(by="recall", ascending=False)
         .reset_index(drop=True)
         .iloc[0, :]
         .Metadata_gene_name
         == "ITGAV"
     )
 
-    assert all(x in result.columns for x in replicate_groups)
+    assert all(x in result_list.columns for x in replicate_groups)
+
+    assert result_int.equals(result_list.query("k == 5"))

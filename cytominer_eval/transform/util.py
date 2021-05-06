@@ -7,7 +7,13 @@ from collections import OrderedDict
 
 def get_available_eval_metrics():
     r"""Output the available eval metrics in the cytominer_eval library"""
-    return ["replicate_reproducibility", "precision_recall", "grit", "mp_value", "enrichment"]
+    return [
+        "replicate_reproducibility",
+        "precision_recall",
+        "grit",
+        "mp_value",
+        "enrichment",
+    ]
 
 
 def get_available_similarity_metrics():
