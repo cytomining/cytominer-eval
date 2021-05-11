@@ -8,8 +8,9 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.transform.util import set_pair_ids
-from cytominer_eval.operations.util import assign_replicates, calculate_precision_recall
+from cytominer_eval.utils.transform_utils import set_pair_ids
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.precisionrecall_utils import calculate_precision_recall
 
 random.seed(123)
 tmpdir = tempfile.gettempdir()
@@ -118,7 +119,7 @@ def test_calculate_precision_recall():
     expected_result = {"k": 10, "precision": 0.4, "recall": 0.1333}
     expected_result = pd.DataFrame(expected_result, index=["result"]).transpose()
 
-    assert_frame_equal(result, expected_result, check_less_precise=True)
+    assert_frame_equal(result, expected_result)
 
     # Check that recall is 1 when k is maximized
     result = pd.DataFrame(
