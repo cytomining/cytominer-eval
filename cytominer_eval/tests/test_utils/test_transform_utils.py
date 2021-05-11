@@ -6,20 +6,16 @@ import numpy as np
 import pandas as pd
 import pandas.api.types as ptypes
 
-from cytominer_eval.transform.util import (
-    get_available_eval_metrics,
-    get_available_similarity_metrics,
-    get_available_grit_summary_methods,
+from cytominer_eval.utils.transform_utils import (
     get_upper_matrix,
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
-    set_grit_column_info,
     assert_eval_metric,
     assert_melt,
     check_replicate_groups,
-    check_grit_replicate_summary_method,
 )
+from cytominer_eval.utils.availability_utils import get_available_eval_metrics
 
 random.seed(123)
 tmpdir = tempfile.gettempdir()
@@ -33,27 +29,6 @@ data_df = pd.DataFrame(
     }
 )
 float_cols = ["float_a", "float_b"]
-
-
-def test_get_available_eval_metrics():
-    expected_result = [
-        "replicate_reproducibility",
-        "precision_recall",
-        "grit",
-        "mp_value",
-        "enrichment"
-    ]
-    assert expected_result == get_available_eval_metrics()
-
-
-def test_get_available_similarity_metrics():
-    expected_result = ["pearson", "kendall", "spearman"]
-    assert expected_result == get_available_similarity_metrics()
-
-
-def test_get_available_grit_summary_methods():
-    expected_result = ["mean", "median"]
-    assert expected_result == get_available_grit_summary_methods()
 
 
 def test_assert_eval_metric():
@@ -111,22 +86,6 @@ def test_set_pair_ids():
     assert result[pair_b]["suffix"] == "_{pair_b}".format(pair_b=pair_b)
 
 
-def test_set_grit_column_info():
-    profile_col = "test_replicate"
-    replicate_group_col = "test_group"
-
-    result = set_grit_column_info(
-        profile_col=profile_col, replicate_group_col=replicate_group_col
-    )
-
-    assert result["profile"]["id"] == "{rep}_pair_a".format(rep=profile_col)
-    assert result["profile"]["comparison"] == "{rep}_pair_b".format(rep=profile_col)
-    assert result["group"]["id"] == "{group}_pair_a".format(group=replicate_group_col)
-    assert result["group"]["comparison"] == "{group}_pair_b".format(
-        group=replicate_group_col
-    )
-
-
 def test_check_replicate_groups():
     available_metrics = get_available_eval_metrics()
 
@@ -174,14 +133,3 @@ def test_check_replicate_groups():
             eval_metric="grit", replicate_groups=wrong_group_dict
         )
     assert "replicate_groups for grit not formed properly." in str(ae.value)
-
-
-def test_check_grit_replicate_summary_method():
-
-    # Pass
-    for metric in get_available_grit_summary_methods():
-        check_grit_replicate_summary_method(metric)
-
-    with pytest.raises(ValueError) as ve:
-        output = check_grit_replicate_summary_method("fail")
-    assert "method not supported, use one of:" in str(ve.value)
