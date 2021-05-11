@@ -8,7 +8,7 @@ import pandas as pd
 from typing import List, Union
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.transform.util import check_replicate_groups
+from cytominer_eval.utils.transform_utils import check_replicate_groups
 from cytominer_eval.operations import (
     replicate_reproducibility,
     precision_recall,

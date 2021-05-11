@@ -5,12 +5,8 @@ import pandas as pd
 from typing import List, Union
 import scipy
 
-from .util import assign_replicates, calculate_grit, check_grit_replicate_summary_method
-from cytominer_eval.transform.util import (
-    set_pair_ids,
-    set_grit_column_info,
-    assert_melt,
-)
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
 
 
 def enrichment(
@@ -18,7 +14,8 @@ def enrichment(
     replicate_groups: List[str],
     percentile: Union[float, List[float]],
 ) -> pd.DataFrame:
-    """Calculate the enrichment score. This score is based on the fisher exact odds score. Similar to the other functions, the closest connections are determined and checked with the replicates.
+    """Calculate the enrichment score. This score is based on the fisher exact odds score.
+    Similar to the other functions, the closest connections are determined and checked with the replicates.
     This score effectively calculates how much better the distribution of correct connections is compared to random.
 
     Parameters

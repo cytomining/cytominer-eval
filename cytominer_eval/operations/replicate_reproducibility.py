@@ -5,8 +5,8 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assign_replicates, set_pair_ids
-from cytominer_eval.transform.util import assert_melt
+from cytominer_eval.utils.operation_utils import assign_replicates, set_pair_ids
+from cytominer_eval.utils.transform_utils import assert_melt
 
 
 def replicate_reproducibility(

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import (
+from cytominer_eval.utils.transform_utils import (
     assert_pandas_dtypes,
     get_upper_matrix,
     set_pair_ids,
