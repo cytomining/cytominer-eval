@@ -119,7 +119,7 @@ def test_calculate_precision_recall():
     expected_result = {"k": 10, "precision": 0.4, "recall": 0.1333}
     expected_result = pd.DataFrame(expected_result, index=["result"]).transpose()
 
-    assert_frame_equal(result, expected_result)
+    assert_frame_equal(result, expected_result, rtol=1e-3)
 
     # Check that recall is 1 when k is maximized
     result = pd.DataFrame(
