@@ -26,14 +26,14 @@ def get_upper_matrix(df: pd.DataFrame) -> np.array:
     return np.triu(np.ones(df.shape), k=1).astype(bool)
 
 
-def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFrame:
     r"""Helper funtion to convert pandas column dtypes
 
     Parameters
     ----------
     df : pandas.DataFrame
         A pandas dataframe to convert columns
-    col_fix : {np.float64, np.str}, optional
+    col_fix : {float, str}, optional
         A column type to convert the input dataframe.
 
     Returns
@@ -53,14 +53,14 @@ def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Da
     return df
 
 
-def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFrame:
     r"""Helper funtion to ensure pandas columns have compatible columns
 
     Parameters
     ----------
     df : pandas.DataFrame
         A pandas dataframe to convert columns
-    col_fix : {np.float64, np.str}, optional
+    col_fix : {float, str}, optional
         A column type to convert the input dataframe.
 
     Returns
@@ -68,7 +68,7 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     pd.DataFrame
         A dataframe with converted columns
     """
-    assert col_fix in [np.str, np.float64], "Only np.str and np.float64 are supported"
+    assert col_fix in [str, float], "Only str and float are supported"
 
     df = convert_pandas_dtypes(df=df, col_fix=col_fix)
 
@@ -76,7 +76,7 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     if col_fix == np.str:
         assert all([ptypes.is_string_dtype(df[x]) for x in df.columns]), assert_error
 
-    if col_fix == np.float64:
+    if col_fix == float:
         assert all([ptypes.is_numeric_dtype(df[x]) for x in df.columns]), assert_error
 
     return df

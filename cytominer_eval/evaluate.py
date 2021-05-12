@@ -25,7 +25,7 @@ def evaluate(
     replicate_groups: Union[List[str], dict],
     operation: str = "replicate_reproducibility",
     similarity_metric: str = "pearson",
-    replicate_reproducibility_quantile: np.float = 0.95,
+    replicate_reproducibility_quantile: float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
     precision_recall_k: Union[int, List[int]] = 10,
     grit_control_perts: List[str] = ["None"],

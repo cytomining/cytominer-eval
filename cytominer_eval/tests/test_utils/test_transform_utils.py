@@ -53,7 +53,7 @@ def test_convert_pandas_dtypes():
 
     data_string_type_df = data_df.astype(str)
     output_df = convert_pandas_dtypes(
-        data_string_type_df.loc[:, float_cols], col_fix=np.float64
+        data_string_type_df.loc[:, float_cols], col_fix=float
     )
     assert all([ptypes.is_numeric_dtype(output_df[x]) for x in output_df.columns])
 
@@ -65,12 +65,12 @@ def test_assert_pandas_dtypes():
 
     with pytest.raises(AssertionError) as ve:
         output = assert_pandas_dtypes(data_df, col_fix="not supported")
-    assert "Only np.str and np.float64 are supported" in str(ve.value)
+    assert "Only str and float are supported" in str(ve.value)
 
-    output_df = assert_pandas_dtypes(data_df, col_fix=np.str)
+    output_df = assert_pandas_dtypes(data_df, col_fix=str)
     all([ptypes.is_string_dtype(output_df[x]) for x in output_df.columns])
 
-    output_df = convert_pandas_dtypes(output_df.loc[:, float_cols], col_fix=np.float64)
+    output_df = convert_pandas_dtypes(output_df.loc[:, float_cols], col_fix=float)
     assert all([ptypes.is_numeric_dtype(output_df[x]) for x in output_df.columns])
 
 
