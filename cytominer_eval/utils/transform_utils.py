@@ -73,7 +73,7 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFram
     df = convert_pandas_dtypes(df=df, col_fix=col_fix)
 
     assert_error = "Columns not successfully updated, is the dataframe consistent?"
-    if col_fix == np.str:
+    if col_fix == str:
         assert all([ptypes.is_string_dtype(df[x]) for x in df.columns]), assert_error
 
     if col_fix == float:

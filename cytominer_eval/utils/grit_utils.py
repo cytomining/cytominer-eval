@@ -102,7 +102,7 @@ def get_grit_entry(df: pd.DataFrame, col: str) -> str:
 
 
 def set_grit_column_info(profile_col: str, replicate_group_col: str) -> dict:
-    r"""Transform column names to be used in calculating grit
+    """Transform column names to be used in calculating grit
 
     In calculating grit, the data must have a metadata feature describing the core
     replicate perturbation (profile_col) and a separate metadata feature(s) describing
@@ -145,7 +145,7 @@ def set_grit_column_info(profile_col: str, replicate_group_col: str) -> dict:
 
 
 def check_grit_replicate_summary_method(replicate_summary_method: str) -> None:
-    r"""Helper function to ensure that we support the user input replicate summary
+    """Helper function to ensure that we support the user input replicate summary
 
     Parameters
     ----------
