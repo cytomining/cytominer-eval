@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import calculate_mp_value
+from cytominer_eval.utils.mpvalue_utils import calculate_mp_value
 
 
 def mp_value(

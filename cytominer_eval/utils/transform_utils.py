@@ -4,30 +4,10 @@ from typing import List, Union
 import pandas.api.types as ptypes
 from collections import OrderedDict
 
-
-def get_available_eval_metrics():
-    r"""Output the available eval metrics in the cytominer_eval library"""
-    return [
-        "replicate_reproducibility",
-        "precision_recall",
-        "grit",
-        "mp_value",
-        "enrichment",
-    ]
-
-
-def get_available_similarity_metrics():
-    r"""Output the available metrics for calculating pairwise similarity in the
-    cytominer_eval library
-    """
-    return ["pearson", "kendall", "spearman"]
-
-
-def get_available_grit_summary_methods():
-    r"""Output the available metrics for calculating pairwise similarity in the
-    cytominer_eval library
-    """
-    return ["mean", "median"]
+from cytominer_eval.utils.availability_utils import (
+    get_available_eval_metrics,
+    get_available_similarity_metrics,
+)
 
 
 def get_upper_matrix(df: pd.DataFrame) -> np.array:
@@ -46,14 +26,14 @@ def get_upper_matrix(df: pd.DataFrame) -> np.array:
     return np.triu(np.ones(df.shape), k=1).astype(bool)
 
 
-def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFrame:
     r"""Helper funtion to convert pandas column dtypes
 
     Parameters
     ----------
     df : pandas.DataFrame
         A pandas dataframe to convert columns
-    col_fix : {np.float64, np.str}, optional
+    col_fix : {float, str}, optional
         A column type to convert the input dataframe.
 
     Returns
@@ -73,14 +53,14 @@ def convert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Da
     return df
 
 
-def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.DataFrame:
+def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFrame:
     r"""Helper funtion to ensure pandas columns have compatible columns
 
     Parameters
     ----------
     df : pandas.DataFrame
         A pandas dataframe to convert columns
-    col_fix : {np.float64, np.str}, optional
+    col_fix : {float, str}, optional
         A column type to convert the input dataframe.
 
     Returns
@@ -88,15 +68,15 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = np.float64) -> pd.Dat
     pd.DataFrame
         A dataframe with converted columns
     """
-    assert col_fix in [np.str, np.float64], "Only np.str and np.float64 are supported"
+    assert col_fix in [str, float], "Only str and float are supported"
 
     df = convert_pandas_dtypes(df=df, col_fix=col_fix)
 
     assert_error = "Columns not successfully updated, is the dataframe consistent?"
-    if col_fix == np.str:
+    if col_fix == str:
         assert all([ptypes.is_string_dtype(df[x]) for x in df.columns]), assert_error
 
-    if col_fix == np.float64:
+    if col_fix == float:
         assert all([ptypes.is_numeric_dtype(df[x]) for x in df.columns]), assert_error
 
     return df
@@ -232,70 +212,4 @@ def check_replicate_groups(
             replicate_groups, list
         ), "Replicate groups must be a list for the {op} operation".format(
             op=eval_metric
-        )
-
-
-def set_grit_column_info(profile_col: str, replicate_group_col: str) -> dict:
-    r"""Transform column names to be used in calculating grit
-
-    In calculating grit, the data must have a metadata feature describing the core
-    replicate perturbation (profile_col) and a separate metadata feature(s) describing
-    the larger group (replicate_group_col) that the perturbation belongs to (e.g. gene,
-    MOA).
-
-    Parameters
-    ----------
-    profile_col : str
-        the metadata column storing profile ids. The column can have unique or replicate
-        identifiers.
-    replicate_group_col : str
-        the metadata column indicating a higher order structure (group) than the
-        profile column. E.g. target gene vs. guide in a CRISPR experiment.
-
-    Returns
-    -------
-    dict
-        A nested dictionary of renamed columns indicating how to determine replicates
-    """
-    # Identify column transform names
-    pair_ids = set_pair_ids()
-
-    profile_id_with_suffix = [
-        "{col}{suf}".format(col=profile_col, suf=pair_ids[x]["suffix"])
-        for x in pair_ids
-    ]
-
-    group_id_with_suffix = [
-        "{col}{suf}".format(col=replicate_group_col, suf=pair_ids[x]["suffix"])
-        for x in pair_ids
-    ]
-
-    col_info = ["id", "comparison"]
-    profile_id_info = dict(zip(col_info, profile_id_with_suffix))
-    group_id_info = dict(zip(col_info, group_id_with_suffix))
-
-    column_id_info = {"profile": profile_id_info, "group": group_id_info}
-    return column_id_info
-
-
-def check_grit_replicate_summary_method(replicate_summary_method: str) -> None:
-    r"""Helper function to ensure that we support the user input replicate summary
-
-    Parameters
-    ----------
-    replicate_summary_method : str
-        The user input replicate summary method
-
-    Returns
-    -------
-    None
-        Assertion will fail if the user inputs an incorrect replicate summary method
-    """
-    avail_methods = get_available_grit_summary_methods()
-
-    if replicate_summary_method not in avail_methods:
-        raise ValueError(
-            "{input} method not supported, use one of: {avail}".format(
-                input=replicate_summary_method, avail=avail_methods
-            )
         )

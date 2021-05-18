@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 from typing import List, Union
 
-from .util import assign_replicates, calculate_precision_recall
-from cytominer_eval.transform.util import set_pair_ids, assert_melt
+from cytominer_eval.utils.precisionrecall_utils import calculate_precision_recall
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
 
 
 def precision_recall(

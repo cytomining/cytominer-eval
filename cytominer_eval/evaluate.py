@@ -8,7 +8,7 @@ import pandas as pd
 from typing import List, Union
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.transform.util import check_replicate_groups
+from cytominer_eval.utils.transform_utils import check_replicate_groups
 from cytominer_eval.operations import (
     replicate_reproducibility,
     precision_recall,
@@ -25,7 +25,7 @@ def evaluate(
     replicate_groups: Union[List[str], dict],
     operation: str = "replicate_reproducibility",
     similarity_metric: str = "pearson",
-    replicate_reproducibility_quantile: np.float = 0.95,
+    replicate_reproducibility_quantile: float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
     precision_recall_k: Union[int, List[int]] = 10,
     grit_control_perts: List[str] = ["None"],
