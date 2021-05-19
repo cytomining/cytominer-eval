@@ -31,7 +31,7 @@ example_file = pathlib.Path(
 df = pd.read_csv(example_file)
 df = df.assign(
     Metadata_profile_id=[
-        f"Metadata_profile_{x}".format(x=x) for x in range(0, df.shape[0])
+        "Metadata_profile_{x}".format(x=x) for x in range(0, df.shape[0])
     ]
 )
 
