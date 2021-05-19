@@ -8,11 +8,12 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assign_replicates, calculate_grit, check_grit_replicate_summary_method
-from cytominer_eval.transform.util import (
-    set_pair_ids,
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
+from cytominer_eval.utils.grit_utils import (
+    check_grit_replicate_summary_method,
     set_grit_column_info,
-    assert_melt,
+    calculate_grit,
 )
 
 

@@ -4,7 +4,7 @@ from sklearn.metrics.pairwise import euclidean_distances
 
 from typing import List
 
-from .util import (
+from cytominer_eval.utils.transform_utils import (
     assert_pandas_dtypes,
     get_upper_matrix,
     set_pair_ids,
@@ -17,7 +17,7 @@ available_evaluation_metrics = get_available_eval_metrics()
 
 
 def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFrame:
-    df = assert_pandas_dtypes(df=df, col_fix=np.float64)
+    df = assert_pandas_dtypes(df=df, col_fix=float)
 
     assert (
         similarity_metric in available_pairwise_similarity_metrics
@@ -113,9 +113,9 @@ def metric_melt(
     meta_df = df.loc[:, metadata_features]
     df = df.loc[:, features]
 
-    # Convert and assert conversion success
-    meta_df = assert_pandas_dtypes(df=meta_df, col_fix=np.str)
-    df = assert_pandas_dtypes(df=df, col_fix=np.float64)
+    # Convert pandas column types and assert conversion success
+    meta_df = assert_pandas_dtypes(df=meta_df, col_fix=str)
+    df = assert_pandas_dtypes(df=df, col_fix=float)
 
     # Get pairwise metric matrix
     pair_df = get_pairwise_metric(df=df, similarity_metric=similarity_metric)

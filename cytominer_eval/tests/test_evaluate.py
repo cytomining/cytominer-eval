@@ -4,8 +4,10 @@ import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
-from cytominer_eval.transform.util import get_available_similarity_metrics
 from cytominer_eval import evaluate
+
+from cytominer_eval.utils.availability_utils import get_available_similarity_metrics
+
 
 example_gene_file = "SQ00014610_normalized_feature_select.csv.gz"
 example_gene_file = pathlib.Path(
@@ -134,6 +136,7 @@ def test_evaluate_precision_recall():
 
     for k in ks:
 
+        # first test the function with k = float, later we test with k = list of floats
         result = evaluate(
             profiles=gene_profiles,
             features=gene_features,
@@ -152,7 +155,7 @@ def test_evaluate_precision_recall():
             result.query("recall == 1").shape[0]
             == expected_result["gene"]["recall"][str(k)]
         )
-
+        # test function with argument k = list of floats, should give same result as above
         result = evaluate(
             profiles=compound_profiles,
             features=compound_features,
@@ -160,7 +163,7 @@ def test_evaluate_precision_recall():
             replicate_groups=["Metadata_broad_sample"],
             operation="precision_recall",
             similarity_metric="pearson",
-            precision_recall_k=k,
+            precision_recall_k=[k],
         )
 
         assert (

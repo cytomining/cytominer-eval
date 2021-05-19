@@ -8,8 +8,8 @@ import pandas as pd
 import pandas.api.types as ptypes
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.operations.util import assign_replicates
-from cytominer_eval.transform.util import assert_melt
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.transform_utils import assert_melt
 
 
 example_file = "SQ00014610_normalized_feature_select.csv.gz"

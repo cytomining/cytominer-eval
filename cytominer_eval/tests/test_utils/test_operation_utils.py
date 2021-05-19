@@ -8,8 +8,10 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from cytominer_eval.transform import metric_melt
-from cytominer_eval.transform.util import set_pair_ids
-from cytominer_eval.operations.util import assign_replicates, calculate_precision_recall
+from cytominer_eval.utils.transform_utils import set_pair_ids
+from cytominer_eval.utils.operation_utils import assign_replicates
+from cytominer_eval.utils.precisionrecall_utils import calculate_precision_recall
+
 
 random.seed(123)
 tmpdir = tempfile.gettempdir()

@@ -5,16 +5,16 @@ import numpy as np
 import pandas as pd
 from typing import List
 
-from .util import assign_replicates, set_pair_ids
-from cytominer_eval.transform.util import assert_melt
+from cytominer_eval.utils.operation_utils import assign_replicates, set_pair_ids
+from cytominer_eval.utils.transform_utils import assert_melt
 
 
 def replicate_reproducibility(
     similarity_melted_df: pd.DataFrame,
     replicate_groups: List[str],
-    quantile_over_null: np.float = 0.95,
+    quantile_over_null: float = 0.95,
     return_median_correlations: bool = False,
-) -> np.float:
+) -> float:
     r"""Summarize pairwise replicate correlations
 
     For a given pairwise similarity matrix, replicate information, and specific options,

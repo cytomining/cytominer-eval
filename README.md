@@ -56,12 +56,13 @@ evaluate(
 
 ## Metrics
 
-Currently, four metric operations are supported:
+Currently, five metric operations are supported:
 
 1. Replicate reproducibility
 2. Precision/recall
 3. mp-value
 4. Grit
+5. Enrichment
 
 ## Demos
 
