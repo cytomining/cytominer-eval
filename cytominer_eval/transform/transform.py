@@ -14,7 +14,21 @@ from cytominer_eval.utils.transform_utils import (
 
 
 def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFrame:
+    """Helper function to output the pairwise similarity metric for a feature-only
+    dataframe.
 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        Samples x features, where all columns can be coerced to floats
+    similarity_metric : str
+        The pairwise comparison to calculate
+
+    Returns
+    -------
+    pandas.DataFrame
+        A pairwise similarity matrix
+    """
     # Check that the input data is in the correct format
     check_similarity_metric(similarity_metric)
     df = assert_pandas_dtypes(df=df, col_fix=float)
@@ -36,7 +50,25 @@ def process_melt(
     meta_df: pd.DataFrame,
     eval_metric: str = "replicate_reproducibility",
 ) -> pd.DataFrame:
+    """Helper function to annotate and process an input similarity matrix
 
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A similarity matrix output from
+        :py:func:`cytominer_eval.transform.transform.get_pairwise_metric`
+    meta_df : pandas.DataFrame
+        A wide matrix of metadata information where the index aligns to the similarity
+        matrix index
+    eval_metric : str, optional
+        Which metric to ultimately calculate. Determines whether or not to keep the full
+        similarity matrix or only one diagonal. Defaults to "replicate_reproducibility".
+
+    Returns
+    -------
+    pandas.DataFrame
+        A pairwise similarity matrix
+    """
     # Confirm that the user formed the input arguments properly
     assert df.shape[0] == df.shape[1], "Matrix must be symmetrical"
     check_eval_metric(eval_metric)
@@ -90,6 +122,30 @@ def metric_melt(
     eval_metric: str = "replicate_reproducibility",
     similarity_metric: str = "pearson",
 ) -> pd.DataFrame:
+    """Helper function to fully transform an input dataframe of metadata and feature
+    columns into a long, melted dataframe of pairwise metric comparisons between
+    profiles.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        A profiling dataset with a mixture of metadata and feature columns
+    features : list
+        Which features make up the profile; included in the pairwise calculations
+    metadata_features : list
+        Which features are considered metadata features; annotate melted dataframe and
+        do not use in pairwise calculations.
+    eval_metric : str, optional
+        Which metric to ultimately calculate. Determines whether or not to keep the full
+        similarity matrix or only one diagonal. Defaults to "replicate_reproducibility".
+    similarity_metric : str, optional
+        The pairwise comparison to calculate
+
+    Returns
+    -------
+    pandas.DataFrame
+        A fully melted dataframe of pairwise correlations and associated metadata
+    """
     # Subset dataframes to specific features
     df = df.reset_index(drop=True)
 
