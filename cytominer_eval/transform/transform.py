@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from sklearn.metrics.pairwise import euclidean_distances
+
 from typing import List
 
 from cytominer_eval.utils.transform_utils import (
@@ -23,7 +25,10 @@ def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFram
         m=similarity_metric, avail=available_pairwise_similarity_metrics
     )
 
-    pair_df = df.transpose().corr(method=similarity_metric)
+    if similarity_metric == "euclidean":
+        pair_df = pd.DataFrame(euclidean_distances(df))
+    else:
+        pair_df = df.transpose().corr(method=similarity_metric)
 
     # Check if the metric calculation went wrong
     # (Current pandas version makes this check redundant)
