@@ -2,26 +2,22 @@ import numpy as np
 import pandas as pd
 from typing import List
 
+from cytominer_eval.utils.availability_utils import (
+    check_similarity_metric,
+    check_eval_metric,
+)
 from cytominer_eval.utils.transform_utils import (
     assert_pandas_dtypes,
     get_upper_matrix,
     set_pair_ids,
-    get_available_eval_metrics,
-    get_available_similarity_metrics,
 )
-
-available_pairwise_similarity_metrics = get_available_similarity_metrics()
-available_evaluation_metrics = get_available_eval_metrics()
 
 
 def get_pairwise_metric(df: pd.DataFrame, similarity_metric: str) -> pd.DataFrame:
-    df = assert_pandas_dtypes(df=df, col_fix=float)
 
-    assert (
-        similarity_metric in available_pairwise_similarity_metrics
-    ), "{m} not supported. Available similarity metrics: {avail}".format(
-        m=similarity_metric, avail=available_pairwise_similarity_metrics
-    )
+    # Check that the input data is in the correct format
+    check_similarity_metric(similarity_metric)
+    df = assert_pandas_dtypes(df=df, col_fix=float)
 
     pair_df = df.transpose().corr(method=similarity_metric)
 
@@ -41,12 +37,9 @@ def process_melt(
     eval_metric: str = "replicate_reproducibility",
 ) -> pd.DataFrame:
 
+    # Confirm that the user formed the input arguments properly
     assert df.shape[0] == df.shape[1], "Matrix must be symmetrical"
-    assert (
-        eval_metric in available_evaluation_metrics
-    ), "{m} not supported. Available evaluation metrics: {avail}".format(
-        m=eval_metric, avail=available_evaluation_metrics
-    )
+    check_eval_metric(eval_metric)
 
     # Get identifiers for pairing metadata
     pair_ids = set_pair_ids()
