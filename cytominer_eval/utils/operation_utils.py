@@ -87,14 +87,16 @@ def compare_distributions(
 
     Parameters
     ----------
-    target_distrib : list
-        a list-like (e.g. numpy.array) of floats representing the first distribution
+    target_distrib : np.array
+        A list-like (e.g. numpy.array) of floats representing the first distribution.
+        Must be of shape (n_samples, 1).
     control_distrib : np.array
-        a list-like (e.g. numpy.array) of floats representing the second distribution
+        A list-like (e.g. numpy.array) of floats representing the second distribution.
+        Must be of shape (n_samples, 1).
     method : str, optional
-        a string indicating how to compare the two distributions. Defaults to "zscore".
+        A string indicating how to compare the two distributions. Defaults to "zscore".
     replicate_summary_method : str, optional
-        a string indicating how to summarize the resulting scores, if applicable. Only
+        A string indicating how to summarize the resulting scores, if applicable. Only
         in use when method="zscore".
 
     Returns
