@@ -89,7 +89,7 @@ def test_metric_melt():
             similarity_metric="pearson",
             eval_metric="NOT SUPPORTED",
         )
-    assert "not supported. Available evaluation metrics:" in str(ve.value)
+    assert "NOT SUPPORTED not supported. Select one of" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
         output = metric_melt(
