@@ -12,18 +12,23 @@
 
 import os
 import sys
+from datetime import date
 
 sys.path.insert(0, os.path.abspath(".."))
 
+import cytominer_eval
 
 # -- Project information -----------------------------------------------------
 
-project = "cytominer-eval"
-copyright = "2021, Gregory P. Way"
-author = "Gregory P. Way"
+project = cytominer_eval.__about__.__project__
+author = cytominer_eval.__about__.__author__
+copyright = "Copyright 2019 - {date} {author}".format(
+    date=date.today().year, author=author
+)
 
 # The full version, including alpha/beta/rc tags
-release = "0.1"
+version = cytominer_eval.__about__.__version__
+release = version
 
 
 # -- General configuration ---------------------------------------------------
