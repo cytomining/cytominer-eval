@@ -2,14 +2,20 @@ import numpy as np
 import pandas as pd
 from typing import List, Union
 
+from sklearn.preprocessing import StandardScaler
+
 from cytominer_eval.utils.transform_utils import set_pair_ids
+from cytominer_eval.utils.availability_utils import (
+    check_compare_distribution_method,
+    check_replicate_summary_method,
+)
 
 
 def assign_replicates(
     similarity_melted_df: pd.DataFrame,
     replicate_groups: List[str],
 ) -> pd.DataFrame:
-    r"""Determine which profiles should be considered replicates.
+    """Determine which profiles should be considered replicates.
 
     Given an elongated pairwise correlation matrix with metadata annotations, determine
     how to assign replicate information.
@@ -66,3 +72,48 @@ def assign_replicates(
         compare_df, left_index=True, right_index=True
     )
     return similarity_melted_df
+
+
+def compare_distributions(
+    target_distrib: List[float],
+    control_distrib: List[float],
+    method: str = "zscore",
+    replicate_summary_method: str = "mean",
+) -> float:
+    """Compare two distributions and output a single score indicating the difference.
+
+    Given two different vectors of distributions and a comparison method, determine how
+    the two distributions are different.
+
+    Parameters
+    ----------
+    target_distrib : list
+        a list-like (e.g. numpy.array) of floats representing the first distribution
+    control_distrib : np.array
+        a list-like (e.g. numpy.array) of floats representing the second distribution
+    method : str, optional
+        a string indicating how to compare the two distributions. Defaults to "zscore".
+    replicate_summary_method : str, optional
+        a string indicating how to summarize the resulting scores, if applicable. Only
+        in use when method="zscore".
+
+    Returns
+    -------
+    float
+        A single value comparing the two distributions
+    """
+    # Confirm that we support the provided methods
+    check_compare_distribution_method(method)
+    check_replicate_summary_method(replicate_summary_method)
+
+    if method == "zscore":
+        scaler = StandardScaler()
+        scaler.fit(control_distrib)
+        scores = scaler.transform(target_distrib)
+
+        if replicate_summary_method == "mean":
+            scores = np.mean(scores)
+        elif replicate_summary_method == "median":
+            scores = np.median(scores)
+
+    return scores
