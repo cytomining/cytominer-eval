@@ -1,55 +1,47 @@
-Metric operations
-=================
+Metrics
+=======
 
 Implementations of various profile evaluation metrics.
-These can be used directly, but we recommend usage through cytominer_eval.evaluate().
+These can be used directly, but we recommend usage through `cytominer_eval.evaluate()``.
 
-cytominer_eval.evaluate() contains several checks to confirm metrics are properly implemented.
+`cytominer_eval.evaluate()` contains several checks to confirm metrics are properly implemented.
 
-cytominer\_eval.operations.grit
--------------------------------
+Grit
+----
 
 .. automodule:: cytominer_eval.operations.grit
    :members:
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.operations.mp\_value
-------------------------------------
+mp-value
+--------
 
 .. automodule:: cytominer_eval.operations.mp_value
    :members:
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.operations.replicate\_reproducibility
------------------------------------------------------
+Replicate reproducibility
+-------------------------
 
 .. automodule:: cytominer_eval.operations.replicate_reproducibility
    :members:
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.operations.precision\_recall
---------------------------------------------
+Precision and recall
+--------------------
 
 .. automodule:: cytominer_eval.operations.precision_recall
    :members:
    :undoc-members:
    :show-inheritance:
 
-cytominer\_eval.operations.util
--------------------------------
+Enrichment
+----------
 
-.. automodule:: cytominer_eval.operations.util
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: cytominer_eval.operations
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. automodule:: cytominer_eval.operations.enrichment
+  :members:
+  :undoc-members:
+  :show-inheritance:

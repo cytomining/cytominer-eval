@@ -11,7 +11,7 @@ Profiles are high dimensional readouts from high-throughput experiments represen
 This python package implements common metrics used to evaluate profile quality and strength.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
    install

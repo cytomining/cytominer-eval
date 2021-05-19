@@ -1,6 +1,9 @@
 cytominer_eval
 ==============
 
+The primary way to use cytominer-eval is through `evaluate.py`.
+The `operation` argument controls which metric to calculate.
+
 evaluate.py
 -----------
 
@@ -9,19 +12,10 @@ evaluate.py
    :undoc-members:
    :show-inheritance:
 
-Other functions
----------------
+cytominer_eval.operations
+-------------------------
 
 .. toctree::
   :maxdepth: 4
 
   cytominer_eval.operations
-  cytominer_eval.transform
-
-Module contents
----------------
-
-.. automodule:: cytominer_eval
-   :members:
-   :undoc-members:
-   :show-inheritance:
