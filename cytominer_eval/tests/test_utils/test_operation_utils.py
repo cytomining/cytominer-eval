@@ -183,7 +183,7 @@ def test_compare_distributions():
             method="zscore",
             replicate_summary_method=summary_method,
         )
-        assert result == hardcoded
+        assert np.round(result, 5) == np.round(hardcoded, 5)
 
         grit_result = (
             grit(
