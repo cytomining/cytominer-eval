@@ -47,12 +47,11 @@ def test_get_available_distribution_compare_methods():
 
 def test_check_eval_metric():
     with pytest.raises(AssertionError) as ae:
-        output = check_eval_metric(eval_metric="NOT SUPPORTED")
-    assert "ot supported. Select one of" in str(ae.value)
+        output = check_eval_metric(eval_metric="MISSING")
+    assert "MISSING not supported. Select one of" in str(ae.value)
 
 
 def test_check_replicate_summary_method():
-    # Pass
     for metric in get_available_summary_methods():
         check_replicate_summary_method(metric)
 
@@ -62,7 +61,6 @@ def test_check_replicate_summary_method():
 
 
 def test_check_similarity_metric():
-    # Pass
     for metric in get_available_similarity_metrics():
         check_similarity_metric(metric)
 
@@ -72,7 +70,6 @@ def test_check_similarity_metric():
 
 
 def test_check_compare_distribution_method():
-    # Pass
     for metric in get_available_distribution_compare_methods():
         check_compare_distribution_method(metric)
 
