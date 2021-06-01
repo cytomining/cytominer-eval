@@ -7,10 +7,15 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
+from cytominer_eval.operations import grit
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.utils.transform_utils import set_pair_ids
-from cytominer_eval.utils.operation_utils import assign_replicates
 from cytominer_eval.utils.precisionrecall_utils import calculate_precision_recall
+from cytominer_eval.utils.availability_utils import get_available_summary_methods
+from cytominer_eval.utils.operation_utils import (
+    assign_replicates,
+    compare_distributions,
+)
 
 
 random.seed(123)
@@ -24,6 +29,11 @@ example_file = pathlib.Path(
 )
 
 df = pd.read_csv(example_file)
+df = df.assign(
+    Metadata_profile_id=[
+        "Metadata_profile_{x}".format(x=x) for x in range(0, df.shape[0])
+    ]
+)
 
 meta_features = [x for x in df.columns if x.startswith("Metadata_")]
 features = df.drop(meta_features, axis="columns").columns.tolist()
@@ -33,6 +43,14 @@ similarity_melted_df = metric_melt(
     features=features,
     metadata_features=meta_features,
     similarity_metric="pearson",
+)
+
+similarity_melted_full_df = metric_melt(
+    df=df,
+    features=features,
+    metadata_features=meta_features,
+    similarity_metric="pearson",
+    eval_metric="grit",
 )
 
 
@@ -129,3 +147,54 @@ def test_calculate_precision_recall():
     )
 
     assert result.loc["recall", "result"] == 1
+
+
+def test_compare_distributions():
+    # Define two distributions using a specific compound as an example
+    compound = "BRD-K07857022-002-01-1"
+    profile_id = "Metadata_profile_378"
+
+    target_group = similarity_melted_full_df.query(
+        "Metadata_profile_id_pair_a == @profile_id"
+    )
+
+    replicate_group_values = target_group.query(
+        "Metadata_broad_sample_pair_b == @compound"
+    ).similarity_metric.values.reshape(-1, 1)
+
+    control_group_values = target_group.query(
+        "Metadata_broad_sample_pair_b == 'DMSO'"
+    ).similarity_metric.values.reshape(-1, 1)
+
+    control_perts = df.query(
+        "Metadata_broad_sample == 'DMSO'"
+    ).Metadata_profile_id.tolist()
+
+    hardcoded_values_should_not_change = {
+        "zscore": {"mean": 5.639379456018854, "median": 5.648269672347573}
+    }
+    for summary_method in get_available_summary_methods():
+
+        hardcoded = hardcoded_values_should_not_change["zscore"][summary_method]
+
+        result = compare_distributions(
+            target_distrib=replicate_group_values,
+            control_distrib=control_group_values,
+            method="zscore",
+            replicate_summary_method=summary_method,
+        )
+        assert np.round(result, 5) == np.round(hardcoded, 5)
+
+        grit_result = (
+            grit(
+                similarity_melted_full_df,
+                control_perts=control_perts,
+                profile_col="Metadata_profile_id",
+                replicate_group_col="Metadata_broad_sample",
+                replicate_summary_method=summary_method,
+            )
+            .query("perturbation == @profile_id")
+            .grit.values[0]
+        )
+
+        assert result == grit_result

@@ -193,4 +193,4 @@ def test_grit_summary_metric():
             replicate_group_col=replicate_group_col,
             replicate_summary_method="fail",
         )
-    assert "method not supported, use one of:" in str(ve.value)
+    assert "fail method not supported. Select one of:" in str(ve.value)
