@@ -4,10 +4,7 @@ from typing import List, Union
 import pandas.api.types as ptypes
 from collections import OrderedDict
 
-from cytominer_eval.utils.availability_utils import (
-    get_available_eval_metrics,
-    get_available_similarity_metrics,
-)
+from cytominer_eval.utils.availability_utils import check_eval_metric
 
 
 def get_upper_matrix(df: pd.DataFrame) -> np.array:
@@ -82,28 +79,6 @@ def assert_pandas_dtypes(df: pd.DataFrame, col_fix: type = float) -> pd.DataFram
     return df
 
 
-def assert_eval_metric(eval_metric: str) -> None:
-    r"""Helper function to ensure that we support the input eval metric
-
-    Parameters
-    ----------
-    eval_metric : str
-        The user input eval metric
-
-    Returns
-    -------
-    None
-        Assertion will fail if we don't support the input eval metric
-    """
-    avail_metrics = get_available_eval_metrics()
-
-    assert (
-        eval_metric in avail_metrics
-    ), "{eval} not supported. Select one of {avail}".format(
-        eval=eval_metric, avail=avail_metrics
-    )
-
-
 def assert_melt(
     df: pd.DataFrame, eval_metric: str = "replicate_reproducibility"
 ) -> None:
@@ -125,7 +100,7 @@ def assert_melt(
     None
         Assertion will fail if we incorrectly melted the matrix
     """
-    assert_eval_metric(eval_metric=eval_metric)
+    check_eval_metric(eval_metric=eval_metric)
 
     pair_ids = set_pair_ids()
     df = df.loc[:, [pair_ids[x]["index"] for x in pair_ids]]
@@ -189,7 +164,7 @@ def check_replicate_groups(
     None
         Assertion will fail for improperly constructed replicate_groups
     """
-    assert_eval_metric(eval_metric=eval_metric)
+    check_eval_metric(eval_metric=eval_metric)
 
     if eval_metric == "grit":
         assert isinstance(

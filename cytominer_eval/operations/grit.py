@@ -8,13 +8,10 @@ import numpy as np
 import pandas as pd
 from typing import List
 
+from cytominer_eval.utils.availability_utils import check_replicate_summary_method
 from cytominer_eval.utils.operation_utils import assign_replicates
 from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
-from cytominer_eval.utils.grit_utils import (
-    check_grit_replicate_summary_method,
-    set_grit_column_info,
-    calculate_grit,
-)
+from cytominer_eval.utils.grit_utils import set_grit_column_info, calculate_grit
 
 
 def grit(
@@ -47,7 +44,7 @@ def grit(
         A dataframe of grit measurements per perturbation
     """
     # Check if we support the provided summary method
-    check_grit_replicate_summary_method(replicate_summary_method)
+    check_replicate_summary_method(replicate_summary_method)
 
     # Determine pairwise replicates
     similarity_melted_df = assign_replicates(

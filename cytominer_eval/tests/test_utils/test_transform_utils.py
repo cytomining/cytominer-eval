@@ -11,7 +11,6 @@ from cytominer_eval.utils.transform_utils import (
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
-    assert_eval_metric,
     assert_melt,
     check_replicate_groups,
 )
@@ -30,12 +29,6 @@ data_df = pd.DataFrame(
     }
 )
 float_cols = ["float_a", "float_b"]
-
-
-def test_assert_eval_metric():
-    with pytest.raises(AssertionError) as ae:
-        output = assert_eval_metric(eval_metric="NOT SUPPORTED")
-    assert "ot supported. Select one of" in str(ae.value)
 
 
 def test_get_upper_matrix():
