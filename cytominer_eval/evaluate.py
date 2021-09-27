@@ -15,6 +15,7 @@ from cytominer_eval.operations import (
     grit,
     mp_value,
     enrichment,
+    hitk,
 )
 
 
@@ -153,6 +154,11 @@ def evaluate(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
             percentile=enrichment_percentile,
+        )
+    elif operation == "hitk":
+        metric_result = hitk(
+            similarity_melted_df=similarity_melted_df,
+            replicate_groups=replicate_groups,
         )
 
     return metric_result
