@@ -19,16 +19,21 @@ def hitk(similarity_melted_df: pd.DataFrame, percent_list: list,) -> pd.DataFram
         samples. Importantly, it must follow the exact structure as output from
         :py:func:`cytominer_eval.transform.transform.metric_melt`.
 
-    percent_list : list
+    percent_list : list or "all"
         A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
+        If percent_list == "all" a full dict with the length of classes will be created.
 
     Returns
     -------
     indexes : list
         full list of all indexes. Can be used for histogram plotting
     percent_scores: dict
-        percentages and their corresponding score
+        percentages or in and their corresponding score
     """
+    # check for correct input
+    assert type(percent_list) == list or percent_list == "all", "input is incorrect"
+    if type(percent_list) == list:
+        assert max(percent_list) <= 100, "percentages must be smaller than 100"
 
     # group by MOA and then add a `rank` and a `same_moa` column to the df
     grouped = similarity_melted_df.groupby("pair_a_index")
