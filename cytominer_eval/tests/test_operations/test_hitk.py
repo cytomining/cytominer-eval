@@ -1,14 +1,10 @@
 import os
 import random
-import pytest
 import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
 
-import sys
-
-sys.path.insert(0, "/Users/mbornhol/git/mycyto/cytominer-eval")
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations import hitk
