@@ -33,6 +33,7 @@ def evaluate(
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
     enrichment_percentile: Union[float, List[float]] = 0.99,
+    percent_list = [2, 5, 10],
 ):
     r"""Evaluate profile quality and strength.
 
@@ -158,7 +159,7 @@ def evaluate(
     elif operation == "hitk":
         metric_result = hitk(
             similarity_melted_df=similarity_melted_df,
-            replicate_groups=replicate_groups,
+            percent_list=percent_list
         )
 
     return metric_result

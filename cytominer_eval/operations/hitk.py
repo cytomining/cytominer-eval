@@ -3,16 +3,18 @@
 import numpy as np
 import pandas as pd
 
-from cytominer_eval.utils.hitk_utils import index_hits, count_hits
+from cytominer_eval.utils.hitk_utils import index_hits, percentage_scores
 
 
 def hitk(
-    similarity_melted_df: pd.DataFrame,
-    only_first = False,
+        similarity_melted_df: pd.DataFrame,
+        percent_list: list,
 ) -> pd.DataFrame:
     """Calculate the enrichment score. This score is based on the fisher exact odds score.
     Similar to the other functions, the closest connections are determined and checked with the replicates.
     This score effectively calculates how much better the distribution of correct connections is compared to random.
+
+
 
     Parameters
     ----------
@@ -21,32 +23,30 @@ def hitk(
         samples. Importantly, it must follow the exact structure as output from
         :py:func:`cytominer_eval.transform.transform.metric_melt`.
 
+    It is assumed that the similarity_melted_df is unique in Metadata_broad_sample_pair_a and Metadata_pert_well_pair_a
+
     Returns
     -------
     dict
         percentile, threshold, odds ratio and p value
     """
-    # MOAs must have more than one compound, so DMSO needs to be deleted from the melted_df
-    con = similarity_melted_df[similarity_melted_df["Metadata_broad_sample_pair_a"] != 'DMSO']
+    # check if input is correct
+    if sorted(percent_list) != percent_list:
+        print("percent list is not ascending.")
 
-    grouped = similarity_melted_df.groupby(['Metadata_broad_sample_pair_a'])
+    # group by MOA and then add a rank and a same_moa column to the df
+    grouped = similarity_melted_df.groupby('pair_a_index')
+    index_df = grouped.apply(index_hits)
 
-    # add a rank and a same_moa column to the df
-    index_df = grouped.apply(lambda x: index_hits(x))
-    index_df.reset_index(drop=True, inplace=True)
-    # rename columns for convinience
+    # rename columns for convenience
     index_df.rename(columns={'Metadata_broad_sample_pair_a': 'target_compound',
-                            'Metadata_broad_sample_pair_b': 'match_compound', 'Metadata_moa_pair_a': 'target_moa',
-                            'Metadata_moa_pair_b': 'match_moa'}, inplace=True)
+                             'Metadata_broad_sample_pair_b': 'match_compound', 'Metadata_moa_pair_a': 'target_moa',
+                             'Metadata_moa_pair_b': 'match_moa'}, inplace=True)
 
-    indexes = count_hits(index_df, only_first=only_first)
-    # fully flatten the list
-    indexes = [item for sublist in indexes.tolist() for item in sublist]
+    # make a list of all index where the MOA was the same
+    indexes = index_df[index_df['same_moa'] == True]['rank'].tolist()
 
-    # ran_index_flat = random_gen(con, meta_features)
+    percent_scores = percentage_scores(similarity_melted_df, indexes, percent_list)
 
-    d = {}
-    for n in [50, 75, 100]:
-        d[n] = len([i for i in indexes if i < n]) - len([i for i in ran_index_flat if i < n])
 
-    return indexes
+    return indexes, percent_scores

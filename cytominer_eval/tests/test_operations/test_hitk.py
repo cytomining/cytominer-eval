@@ -27,13 +27,13 @@ example_file = pathlib.Path(
 )
 
 df = pd.read_csv(example_file)
+df['Metadata_moa'] = df['Metadata_moa'].fillna('unknown')
+
 
 meta_features = [
     x for x in df.columns if (x.startswith("Metadata_") or x.startswith("Image_"))
 ]
 features = df.drop(meta_features, axis="columns").columns.tolist()
-
-replicate_groups = ["Metadata_broad_sample"]
 
 similarity_melted_df = metric_melt(
     df=df,
@@ -43,9 +43,44 @@ similarity_melted_df = metric_melt(
     eval_metric="hitk",
 )
 
+percent_list = [2,5,10,100]
+indexes, percent_results = hitk(similarity_melted_df, percent_list)
+
 def test_hitk():
-    result = hitk(similarity_melted_df)
-    assert True
+    assert percent_results == {2: 690, 5: 984, 10: 1147, 100: 0}
+    assert max(indexes) == 382
+    assert min(indexes) == 0
+
+def test_number_of_hits():
+    """Calculates the number of indexes based off the MOA value count in the original df
+    """
+    s = sum([n * (n - 1) for n in df.Metadata_moa.value_counts()])
+    assert s == len(indexes)
+
+
+ran = df.copy()
+ran[features] = ran[features].iloc[np.random.permutation(len(df))].reset_index(drop=True)
+similarity_melted_ran = metric_melt(
+    df=ran,
+    features=features,
+    metadata_features=meta_features,
+    similarity_metric="pearson",
+    eval_metric="hitk",
+)
+ran_indexes, ran_percent_results = hitk(similarity_melted_ran, percent_list)
+
+def test_random_input():
+    len(ran_indexes) == len(indexes)
+    assert ran_percent_results[100] == 0
+    median_index = abs(np.median(ran_indexes) - len(similarity_melted_ran.pair_b_index.unique()) / 2)
+    assert median_index < 30
+
+
+
 
 
 test_hitk()
+
+test_number_of_hits()
+
+test_random_input()

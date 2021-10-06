@@ -1,39 +1,58 @@
-import pandas as pd
+
 
 def index_hits(df):
-    df.reset_index(drop=True, inplace=True)
-    df['rank'] = range(len(df))
-    moa = df.Metadata_moa_pair_a.iloc[0]
-    df['same_moa'] = df['Metadata_moa_pair_b'] == moa
-    df.drop(columns=['pair_a_index', 'pair_b_index', 'similarity_metric'], inplace=True)
-    df = df[['Metadata_broad_sample_pair_a', 'Metadata_moa_pair_a', 'Metadata_broad_sample_pair_b',
-             'Metadata_moa_pair_b', 'rank', 'same_moa']]
-    return df
+    """Adds the rank or index of each connection to the dataframe.
+    It then further drops and reorders unnecessary columns.
 
-def count_first(df: pd.DataFrame):
-    """
-    Intakes a dataframe with only
     Parameters
     ----------
-    df :
-    only_first :
+    df : grouped sub dataframe from the similarity_melted_df
+
+    Returns
+    -------
+    slimmed dataframe with rank and same_moa
+
+    """
+    df = df.sort_values(['similarity_metric'], ascending=False) # inplace=True,
+    # rank all compounds by their similarity
+    df['rank'] = range(len(df))
+
+    # add a column which is true if pair a and b have the same MOA
+    moa = df.Metadata_moa_pair_a.iloc[0]
+    df['same_moa'] = df['Metadata_moa_pair_b'] == moa
+
+    # clean and reorder columns
+    df = df[['Metadata_broad_sample_pair_a', 'Metadata_moa_pair_a', 'Metadata_broad_sample_pair_b',
+             'Metadata_moa_pair_b', 'rank', 'same_moa']]
+    df = df.reset_index(drop=True) #inplace=True
+    return df
+
+
+def percentage_scores(similarity_melted_df, indexes, p_list):
+    """
+
+    Parameters
+    ----------
+    similarity_melted_df :
+    p_list :
+    indexes :
 
     Returns
     -------
 
     """
-    index_ls = df[df['same_moa'] == True]['rank'].tolist()
-    if len(index_ls) == 0:
-        print('Error. Only one compound for this moa: ', df.target_compound.iloc[0])
-    return index_ls[0]
+    # get the number of compounds in this dataset
+    nr_of_classes = len(similarity_melted_df.pair_b_index.unique())
 
-def count_hits(df: pd.DataFrame, only_first):
-    if not only_first:
-        index_ls = df[df['same_moa'] == True]['rank'].tolist()
-        return index_ls
-    else:
-        group = df.groupby(['target_compound'])
-        index_ls = group.apply(lambda x: count_first(x))
-        return index_ls
+    d = {}
+    total_hits = len(indexes)
 
+    # calculate the accumalated hits at different percentages
+    for p in p_list:
+        # calculate the integers referring to the percentage of the full range of classes
+        p_int = int(p * nr_of_classes / 100)
+        # calculate the hits that are expected for a random distribution
+        expected_hits = int(p * total_hits / 100)
+        d[p] = len([i for i in indexes if i <= p_int]) - expected_hits
 
+    return d
