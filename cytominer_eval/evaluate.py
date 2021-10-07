@@ -33,7 +33,8 @@ def evaluate(
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
     enrichment_percentile: Union[float, List[float]] = 0.99,
-    percent_list=[2, 5, 10],
+    hitk_percent_list=[2, 5, 10],
+    hitk_group_col = "pair_a_index",
 ):
     r"""Evaluate profile quality and strength.
 
@@ -106,6 +107,15 @@ def evaluate(
     enrichment_percentile : float or list of floats, optional
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
+    hitk_percent_list : list or "all", optional
+        Only used when operation='hitk'
+        A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
+        If percent_list == "all" a full dict with the length of classes will be created.
+        Percentages are given as integers, ie 50 means 50 %.
+    hitk_group_col : str, optional
+        Only used when operation='hitk'
+        The column over which the hits are indexed.
+        Only deviate from "pair_a_index" if you know what you are doing!
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -159,7 +169,8 @@ def evaluate(
     elif operation == "hitk":
         metric_result = hitk(
             similarity_melted_df=similarity_melted_df,
-            percent_list=percent_list
+            percent_list=hitk_percent_list,
+            group_col = hitk_group_col
         )
 
     return metric_result
