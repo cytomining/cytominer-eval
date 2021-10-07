@@ -4,8 +4,10 @@ import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
-from cytominer_eval import evaluate
+from math import isclose
 
+
+from cytominer_eval import evaluate
 from cytominer_eval.utils.availability_utils import get_available_similarity_metrics
 
 
@@ -40,6 +42,7 @@ compound_features = compound_profiles.drop(
     compound_meta_features, axis="columns"
 ).columns.tolist()
 compound_groups = ["Metadata_broad_sample", "Metadata_mg_per_ml"]
+
 
 
 def test_evaluate_replicate_reproducibility():
@@ -350,3 +353,23 @@ def test_evaluate_mp_value():
             mp_value_params={"something else": 1},
         )
     assert "Unknown parameters provided. Only" in str(ae.value)
+
+
+def test_evaluate_hitk():
+    hitk_replicate_groups = ['Metadata_moa']
+    hitk_percent_list = "all"
+
+    hitk_hits_list, percent_scores = evaluate(
+        profiles=compound_profiles,
+        features=compound_features,
+        meta_features=compound_meta_features,
+        replicate_groups=hitk_replicate_groups,
+        operation="hitk",
+        hitk_percent_list=hitk_percent_list,
+        hitk_group_col="pair_a_index",
+    )
+    assert isclose(percent_scores[0], 150.75, abs_tol=1e-1)
+
+    last_score = percent_scores[len(percent_scores) - 1]
+    assert isclose(last_score, 0, abs_tol=1e-1)
+

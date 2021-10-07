@@ -107,7 +107,7 @@ def evaluate(
     enrichment_percentile : float or list of floats, optional
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
-    hitk_percent_list : list or "all", optional
+    hitk_percent_list : list or "all"
         Only used when operation='hitk'
         A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
         If percent_list == "all" a full dict with the length of classes will be created.
@@ -169,8 +169,8 @@ def evaluate(
     elif operation == "hitk":
         metric_result = hitk(
             similarity_melted_df=similarity_melted_df,
+            replicate_groups=replicate_groups,
             percent_list=hitk_percent_list,
-            group_col = hitk_group_col
+            group_col=hitk_group_col,
         )
-
     return metric_result
