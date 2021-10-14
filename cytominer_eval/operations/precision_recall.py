@@ -17,7 +17,7 @@ def precision_recall(
     groupby_columns: List[str],
     k: Union[int, List[int]],
 ) -> pd.DataFrame:
-    """Determine the precision and recall at k for all unique replicate groups
+    """Determine the precision and recall at k for all unique groupby_columns samples
     based on a predefined similarity metric (see cytominer_eval.transform.metric_melt)
 
     Parameters

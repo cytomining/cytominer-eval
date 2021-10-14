@@ -38,7 +38,8 @@ similarity_melted_df = metric_melt(
 
 replicate_groups = ["Metadata_gene_name", "Metadata_cell_line"]
 
-groupby_columns = ['Metadata_pert_name']
+groupby_columns = ["Metadata_pert_name"]
+
 
 def test_precision_recall():
     result_list = precision_recall(
