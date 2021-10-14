@@ -1,15 +1,14 @@
 import os
 import random
-import pytest
 import pathlib
 import tempfile
-import numpy as np
 import pandas as pd
+
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations import precision_recall
 
-random.seed(123)
+random.seed(42)
 tmpdir = tempfile.gettempdir()
 
 # Load CRISPR dataset
@@ -37,32 +36,35 @@ similarity_melted_df = metric_melt(
 
 replicate_groups = ["Metadata_gene_name", "Metadata_cell_line"]
 
+groupby_columns = ['Metadata_pert_name', 'Image_Metadata_Well']
 
 def test_precision_recall():
     result_list = precision_recall(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
+        groupby_columns=groupby_columns,
         k=[5, 10],
     )
 
     result_int = precision_recall(
         similarity_melted_df=similarity_melted_df,
         replicate_groups=replicate_groups,
+        groupby_columns=groupby_columns,
         k=5,
     )
 
     assert len(result_list.k.unique()) == 2
     assert result_list.k.unique()[0] == 5
 
-    # ITGAV has a really strong profile
+    # ITGAV-1 has a really strong profile
     assert (
         result_list.sort_values(by="recall", ascending=False)
         .reset_index(drop=True)
         .iloc[0, :]
-        .Metadata_gene_name
-        == "ITGAV"
+        .Metadata_pert_name
+        == "ITGAV-2"
     )
 
-    assert all(x in result_list.columns for x in replicate_groups)
+    assert all(x in result_list.columns for x in groupby_columns)
 
     assert result_int.equals(result_list.query("k == 5"))
