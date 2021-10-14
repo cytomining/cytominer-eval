@@ -4,6 +4,8 @@ import pathlib
 import tempfile
 import pandas as pd
 
+# import sys
+# sys.path.insert(0, "/Users/mbornhol/git/mycyto/cytominer-eval")
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations import precision_recall
@@ -36,7 +38,7 @@ similarity_melted_df = metric_melt(
 
 replicate_groups = ["Metadata_gene_name", "Metadata_cell_line"]
 
-groupby_columns = ['Metadata_pert_name', 'Image_Metadata_Well']
+groupby_columns = ['Metadata_pert_name']
 
 def test_precision_recall():
     result_list = precision_recall(
@@ -62,7 +64,7 @@ def test_precision_recall():
         .reset_index(drop=True)
         .iloc[0, :]
         .Metadata_pert_name
-        == "ITGAV-2"
+        == "ITGAV-1"
     )
 
     assert all(x in result_list.columns for x in groupby_columns)

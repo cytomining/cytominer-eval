@@ -23,8 +23,8 @@ def evaluate(
     features: List[str],
     meta_features: List[str],
     replicate_groups: Union[List[str], dict],
-    precision_recall_groupby_columns: List[str],
     operation: str = "replicate_reproducibility",
+    groupby_columns: List[str] = "Metadata_moa",
     similarity_metric: str = "pearson",
     replicate_reproducibility_quantile: float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
@@ -65,13 +65,13 @@ def evaluate(
         guides targeting the same genes. See also
         :py:func:`cytominer_eval.operations.grit` and
         :py:func:`cytominer_eval.transform.util.check_replicate_groups`.
-    precision_recall_groupby_columns : List of str
-        Only used for precision_recall
-        Column by which the sim mat is grouped and by which the precision is calculated.
-        For example, if groupby_column = Metadata_sample then the precision recall is calculated for each sample.
     operation : {'replicate_reproducibility', 'precision_recall', 'grit', 'mp_value'}, optional
         The specific evaluation metric to calculate. The default is
         "replicate_reproducibility".
+    groupby_columns : List of str
+        Only used for operation = 'precision_recall' and 'hit@k'
+        Column by which the similarity matrix is grouped and by which the operation is calculated.
+        For example, if groupby_column = "Metadata_broad_sample" then precision/recall is calculated for each sample.
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
         in pandas.DataFrame.cor(). The default is "pearson".
@@ -136,7 +136,7 @@ def evaluate(
         metric_result = precision_recall(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
-            groupby_columns=precision_recall_groupby_columns,
+            groupby_columns=groupby_columns,
             k=precision_recall_k,
         )
     elif operation == "grit":

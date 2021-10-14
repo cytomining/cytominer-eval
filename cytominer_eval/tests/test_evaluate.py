@@ -134,6 +134,9 @@ def test_evaluate_precision_recall():
         },
     }
 
+    gene_groupby_columns = ['Metadata_pert_name']
+    compound_groupby_columns = ['Metadata_broad_sample']
+
     for k in ks:
 
         # first test the function with k = float, later we test with k = list of floats
@@ -142,6 +145,7 @@ def test_evaluate_precision_recall():
             features=gene_features,
             meta_features=gene_meta_features,
             replicate_groups=gene_groups,
+            groupby_columns=gene_groupby_columns,
             operation="precision_recall",
             similarity_metric="pearson",
             precision_recall_k=k,
@@ -161,6 +165,7 @@ def test_evaluate_precision_recall():
             features=compound_features,
             meta_features=compound_meta_features,
             replicate_groups=["Metadata_broad_sample"],
+            groupby_columns=compound_groupby_columns,
             operation="precision_recall",
             similarity_metric="pearson",
             precision_recall_k=[k],

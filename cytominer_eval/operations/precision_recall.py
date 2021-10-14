@@ -27,11 +27,13 @@ def precision_recall(
         samples. Importantly, it must follow the exact structure as output from
         :py:func:`cytominer_eval.transform.transform.metric_melt`.
     replicate_groups : List
-        a list of metadata column names in the original profile dataframe to use as
-        replicate columns.
+        a list of metadata column names in the original profile dataframe to use as replicate columns.
     groupby_columns : List of str
-        column by which the sim mat is grouped and by which the precision is calculated.
-        For example, if groupby_column = Metadata_sample then the precision recall is calculated for each sample.
+        Column by which the similarity matrix is grouped and by which the precision/recall is calculated.
+        For example, if groupby_column = Metadata_sample then the precision is calculated for each sample.
+        Calculating the precision by sample is the default
+        but it is mathematically not incorrect to calculate the precision at the MOA level.
+        This is just less intuitive to understand.
     k : List of ints or int
         an integer indicating how many pairwise comparisons to threshold.
 
