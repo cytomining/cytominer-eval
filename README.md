@@ -63,6 +63,7 @@ Currently, five metric operations are supported:
 3. mp-value
 4. Grit
 5. Enrichment
+6. Hit@k
 
 ## Demos
 
