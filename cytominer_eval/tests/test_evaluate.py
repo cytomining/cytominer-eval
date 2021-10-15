@@ -4,8 +4,10 @@ import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
-from cytominer_eval import evaluate
+from math import isclose
 
+
+from cytominer_eval import evaluate
 from cytominer_eval.utils.availability_utils import get_available_similarity_metrics
 
 
@@ -113,11 +115,7 @@ def test_evaluate_replicate_reprod_return_cor_true():
 
     assert np.round(med_cor_df.similarity_metric.max(), 3) == 0.949
     assert sorted(med_cor_df.columns.tolist()) == sorted(
-        [
-            "Metadata_gene_name",
-            "Metadata_pert_name",
-            "similarity_metric",
-        ]
+        ["Metadata_gene_name", "Metadata_pert_name", "similarity_metric",]
     )
 
 
@@ -208,9 +206,7 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[
-            0,
-        ]
+        .iloc[0,]
     )
     assert np.round(top_result.grit, 4) == 2.3352
     assert top_result.group == "PTK2"
@@ -236,9 +232,7 @@ def test_evaluate_grit():
     top_result = (
         grit_results_df.sort_values(by="grit", ascending=False)
         .reset_index(drop=True)
-        .iloc[
-            0,
-        ]
+        .iloc[0,]
     )
 
     assert np.round(top_result.grit, 4) == 0.9990
@@ -350,3 +344,23 @@ def test_evaluate_mp_value():
             mp_value_params={"something else": 1},
         )
     assert "Unknown parameters provided. Only" in str(ae.value)
+
+
+def test_evaluate_hitk():
+    hitk_replicate_groups = ["Metadata_moa"]
+    hitk_percent_list = "all"
+    groupby_columns = ["Metadata_broad_sample", "Metadata_Plate", "Metadata_Well"]
+
+    hitk_hits_list, percent_scores = evaluate(
+        profiles=compound_profiles,
+        features=compound_features,
+        meta_features=compound_meta_features,
+        replicate_groups=hitk_replicate_groups,
+        operation="hitk",
+        groupby_columns=groupby_columns,
+        hitk_percent_list=hitk_percent_list,
+    )
+    assert isclose(percent_scores[0], 150.75, abs_tol=1e-1)
+
+    last_score = percent_scores[len(percent_scores) - 1]
+    assert isclose(last_score, 0, abs_tol=1e-1)

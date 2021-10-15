@@ -15,6 +15,7 @@ from cytominer_eval.operations import (
     grit,
     mp_value,
     enrichment,
+    hitk,
 )
 
 
@@ -24,6 +25,7 @@ def evaluate(
     meta_features: List[str],
     replicate_groups: Union[List[str], dict],
     operation: str = "replicate_reproducibility",
+    groupby_columns: List[str] = ["Metadata_broad_sample"],
     similarity_metric: str = "pearson",
     replicate_reproducibility_quantile: float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
@@ -32,6 +34,7 @@ def evaluate(
     grit_replicate_summary_method: str = "mean",
     mp_value_params: dict = {},
     enrichment_percentile: Union[float, List[float]] = 0.99,
+    hitk_percent_list=[2, 5, 10],
 ):
     r"""Evaluate profile quality and strength.
 
@@ -66,6 +69,12 @@ def evaluate(
     operation : {'replicate_reproducibility', 'precision_recall', 'grit', 'mp_value'}, optional
         The specific evaluation metric to calculate. The default is
         "replicate_reproducibility".
+    groupby_columns : List of str
+        Only used for operation = 'precision_recall' and 'hitk'
+        Column by which the similarity matrix is grouped and by which the operation is calculated.
+        For example, if groupby_column = "Metadata_broad_sample" then precision/recall is calculated for each sample.
+        Note that it makes sense for these columns to be unique or to span a unique space
+        since precision and hitk may otherwise stop making sense.
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
         in pandas.DataFrame.cor(). The default is "pearson".
@@ -104,6 +113,11 @@ def evaluate(
     enrichment_percentile : float or list of floats, optional
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
+    hitk_percent_list : list or "all"
+        Only used when operation='hitk'. Default : [2,5,10]
+        A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
+        If percent_list == "all" a full dict with the length of classes will be created.
+        Percentages are given as integers, ie 50 means 50 %.
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -154,5 +168,11 @@ def evaluate(
             replicate_groups=replicate_groups,
             percentile=enrichment_percentile,
         )
-
+    elif operation == "hitk":
+        metric_result = hitk(
+            similarity_melted_df=similarity_melted_df,
+            replicate_groups=replicate_groups,
+            groupby_columns=groupby_columns,
+            percent_list=hitk_percent_list,
+        )
     return metric_result

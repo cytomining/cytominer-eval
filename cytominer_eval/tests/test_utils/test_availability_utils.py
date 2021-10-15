@@ -31,6 +31,7 @@ def test_get_available_eval_metrics():
         "grit",
         "mp_value",
         "enrichment",
+        "hitk",
     ]
     assert expected_result == get_available_eval_metrics()
 
