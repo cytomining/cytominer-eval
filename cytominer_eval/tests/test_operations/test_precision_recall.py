@@ -1,17 +1,13 @@
 import os
 import random
 import pathlib
-import tempfile
 import pandas as pd
 
-# import sys
-# sys.path.insert(0, "/Users/mbornhol/git/mycyto/cytominer-eval")
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations import precision_recall
 
 random.seed(42)
-tmpdir = tempfile.gettempdir()
 
 # Load CRISPR dataset
 example_file = "SQ00014610_normalized_feature_select.csv.gz"
