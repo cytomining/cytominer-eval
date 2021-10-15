@@ -114,7 +114,7 @@ def evaluate(
         Only used when `operation='enrichment'`. Determines the percentage of top connections
         used for the enrichment calculation.
     hitk_percent_list : list or "all"
-        Only used when operation='hitk'
+        Only used when operation='hitk'. Default : [2,5,10]
         A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
         If percent_list == "all" a full dict with the length of classes will be created.
         Percentages are given as integers, ie 50 means 50 %.

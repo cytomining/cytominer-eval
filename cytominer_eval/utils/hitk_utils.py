@@ -70,7 +70,7 @@ def percentage_scores(hits_list, p_list, nr_of_groups):
 
             if p == 100 and d[p] != 0:
                 print(
-                    f"The percent score at 100% is {d[p]}, it should be 0 tho. Check your groupby_columns"
+                    "The percent score at 100% is {}, it should be 0 tho. Check your groupby_columns".format(d[p])
                 )
 
     return d
