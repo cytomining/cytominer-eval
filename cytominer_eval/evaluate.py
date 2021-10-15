@@ -25,6 +25,7 @@ def evaluate(
     meta_features: List[str],
     replicate_groups: Union[List[str], dict],
     operation: str = "replicate_reproducibility",
+    groupby_columns: List[str] = ["Metadata_broad_sample"],
     similarity_metric: str = "pearson",
     replicate_reproducibility_quantile: float = 0.95,
     replicate_reproducibility_return_median_cor: bool = False,
@@ -34,7 +35,6 @@ def evaluate(
     mp_value_params: dict = {},
     enrichment_percentile: Union[float, List[float]] = 0.99,
     hitk_percent_list=[2, 5, 10],
-    hitk_group_col = "pair_a_index",
 ):
     r"""Evaluate profile quality and strength.
 
@@ -69,6 +69,12 @@ def evaluate(
     operation : {'replicate_reproducibility', 'precision_recall', 'grit', 'mp_value'}, optional
         The specific evaluation metric to calculate. The default is
         "replicate_reproducibility".
+    groupby_columns : List of str
+        Only used for operation = 'precision_recall' and 'hitk'
+        Column by which the similarity matrix is grouped and by which the operation is calculated.
+        For example, if groupby_column = "Metadata_broad_sample" then precision/recall is calculated for each sample.
+        Note that it makes sense for these columns to be unique or to span a unique space
+        since precision and hitk may otherwise stop making sense.
     similarity_metric: {'pearson', 'spearman', 'kendall'}, optional
         How to calculate pairwise similarity. Defaults to "pearson". We use the input
         in pandas.DataFrame.cor(). The default is "pearson".
@@ -112,10 +118,6 @@ def evaluate(
         A list of percentages at which to calculate the percent scores, ie the amount of indexes below this percentage.
         If percent_list == "all" a full dict with the length of classes will be created.
         Percentages are given as integers, ie 50 means 50 %.
-    hitk_group_col : str, optional
-        Only used when operation='hitk'
-        The column over which the hits are indexed.
-        Only deviate from "pair_a_index" if you know what you are doing!
     """
     # Check replicate groups input
     check_replicate_groups(eval_metric=operation, replicate_groups=replicate_groups)
@@ -170,7 +172,7 @@ def evaluate(
         metric_result = hitk(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
+            groupby_columns=groupby_columns,
             percent_list=hitk_percent_list,
-            group_col=hitk_group_col,
         )
     return metric_result

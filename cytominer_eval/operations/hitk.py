@@ -4,7 +4,7 @@ import pandas as pd
 from typing import List, Union
 
 
-from cytominer_eval.utils.hitk_utils import add_hits_hits, percentage_scores
+from cytominer_eval.utils.hitk_utils import add_hit_rank, percentage_scores
 from cytominer_eval.utils.operation_utils import assign_replicates
 from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
 
@@ -12,8 +12,8 @@ from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
 def hitk(
     similarity_melted_df: pd.DataFrame,
     replicate_groups: List[str],
+    groupby_columns: List[str],
     percent_list: Union[int, List[int]],
-    group_col="pair_a_index",
 ) -> pd.DataFrame:
     """Calculate the hit@k hits list and percent scores.
     This function groups the similarity matrix by each sample (group_col) and by similarity score. It then determines the rank of each correct hit.
@@ -34,23 +34,24 @@ def hitk(
     replicate_groups : list or int
         a list of metadata column names in the original profile dataframe to use as replicate columns.
 
+    groupby_columns: str
+        group columns determine the columns over which the similarity_melted_df is grouped.
+        Usually groupby_columns will span the full space of the input data
+        such that drop_duplicates by the groupby_cols would not change the data.
+        If you group over Metadata_plate for examples, you will get meaningless results.
+        This can easily be seen from the fact that the percent score at 100 will be nonzero.
+
     percent_list : list or "all"
         A list of percentages at which to calculate the percent scores, ie the amount of hits below this percentage.
         If percent_list == "all" a full dict with the length of classes will be created.
         Percentages are given as integers, ie 50 means 50 %.
-
-    group_col: str
-        group columns determine the column over which the similarity_melted_df is grouped.
-        Usually group_col will be "pair_a_index" since this follows metric_melt in its decision on using each row of the original matrix as a unique sample.
-        If you wish to group by Metadata_broad_sample or by Metadata_moa, you can do this.
-        However, this makes your results less intuitive and maybe meaningless.
 
     Returns
     -------
     hits_list : list
         full list of all hits. Can be used for histogram plotting.
     percent_scores: dict
-        dictionary of the percentage list and their corresponding percent scores (see above).
+        dictionary of the percentage list and their corresponding percent scores (see percent score function).
     """
     # make sure percent_list is a list
     if type(percent_list) == int:
@@ -66,11 +67,18 @@ def hitk(
     # Check to make sure that the melted dataframe is full
     assert_melt(similarity_melted_df, eval_metric="hitk")
 
-    # see documentation above, this should be "pair_index_a"
-    grouped = similarity_melted_df.groupby(group_col)
+    # Extract the name of the columns in the sim_df
+    pair_ids = set_pair_ids()
+    groupby_cols_suffix = [
+        "{x}{suf}".format(x=x, suf=pair_ids[list(pair_ids)[0]]["suffix"])
+        for x in groupby_columns
+    ]
+
+    # group the sim_df by the groupby_columns
+    grouped = similarity_melted_df.groupby(groupby_cols_suffix)
     nr_of_groups = grouped.ngroups
     # Within each group, add the ranks of each connection to a new column
-    similarity_melted_with_rank = grouped.apply(add_hits_hits)
+    similarity_melted_with_rank = grouped.apply(lambda x: add_hit_rank(x))
 
     # make a list of the ranks of correct connection (hits), ie where the group_replicate is true
     hits_list = similarity_melted_with_rank[
@@ -78,8 +86,6 @@ def hitk(
     ]["rank"].tolist()
 
     # calculate the scores at each percentage
-    percent_scores = percentage_scores(
-        similarity_melted_df, hits_list, percent_list, nr_of_groups
-    )
+    percent_scores = percentage_scores(hits_list, percent_list, nr_of_groups)
 
     return hits_list, percent_scores

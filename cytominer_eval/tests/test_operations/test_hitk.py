@@ -29,7 +29,7 @@ df.loc[
     "Metadata_moa",
 ] = "none"
 df = df[~df["Metadata_moa"].isna()]
-df_len = df.shape[0]
+
 
 meta_features = [
     x for x in df.columns if (x.startswith("Metadata_") or x.startswith("Image_"))
@@ -46,12 +46,15 @@ similarity_melted_df = metric_melt(
 
 # compute the normal index_list
 replicate_group = ["Metadata_moa"]
+groupby_columns = ["Metadata_broad_sample", "Metadata_Plate", "Metadata_Well"]
 percent_list = [2, 5, 10, 100]
+
+
 index_list, percent_results = hitk(
     similarity_melted_df=similarity_melted_df,
     replicate_groups=replicate_group,
+    groupby_columns=groupby_columns,
     percent_list=percent_list,
-    group_col="pair_a_index",
 )
 
 
@@ -60,8 +63,8 @@ percent_all = "all"
 indexes_all, percent_results_all = hitk(
     similarity_melted_df=similarity_melted_df,
     replicate_groups=replicate_group,
+    groupby_columns=groupby_columns,
     percent_list=percent_all,
-    group_col="pair_a_index",
 )
 
 # compute the index with a randomized input
@@ -80,8 +83,8 @@ percent_list = [2, 5, 10, 100]
 ran_index_list, ran_percent_results = hitk(
     similarity_melted_df=similarity_melted_ran,
     replicate_groups=replicate_group,
+    groupby_columns=groupby_columns,
     percent_list=percent_list,
-    group_col="pair_a_index",
 )
 
 # if we use a combination of replicate groups that is unique for each index in the original df,
@@ -92,8 +95,8 @@ percent_list = [2, 5, 10, 100]
 index_list_empty, percent_results_empty = hitk(
     similarity_melted_df=similarity_melted_df,
     replicate_groups=replicate_group,
+    groupby_columns=groupby_columns,
     percent_list=percent_list,
-    group_col="pair_a_index",
 )
 
 
