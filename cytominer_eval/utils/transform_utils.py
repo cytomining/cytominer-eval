@@ -116,6 +116,8 @@ def assert_melt(
         assert index_sums[0] == index_sums[1], assert_error
     elif eval_metric == "grit":
         assert index_sums[0] == index_sums[1], assert_error
+    elif eval_metric == "hitk":
+        assert index_sums[0] == index_sums[1], assert_error
 
 
 def set_pair_ids():

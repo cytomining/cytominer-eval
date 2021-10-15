@@ -6,6 +6,7 @@ def get_available_eval_metrics():
         "grit",
         "mp_value",
         "enrichment",
+        "hitk",
     ]
 
 
