@@ -144,6 +144,7 @@ def evaluate(
         metric_result = precision_recall(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
+            groupby_columns=groupby_columns,
             k=precision_recall_k,
         )
     elif operation == "grit":
