@@ -1,4 +1,3 @@
-import pathlib
 from setuptools import setup
 from setuptools import find_packages
 
@@ -6,7 +5,7 @@ with open("README.md", encoding="utf-8") as readme_file:
     long_description = readme_file.read()
 
 about = {}
-with open(pathlib.Path("cytominer_eval/__about__.py")) as fp:
+with open("cytominer_eval/__about__.py") as fp:
     exec(fp.read(), about)
 
 setup(
