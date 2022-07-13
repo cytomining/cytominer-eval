@@ -1,3 +1,4 @@
+"""Information about cytominer_eval."""
 __project__ = "cytominer_eval"
 __author__ = "Gregory Way"
 __version__ = "0.1"

@@ -1,6 +1,5 @@
 import os
 import random
-import pytest
 import pathlib
 import tempfile
 import numpy as np

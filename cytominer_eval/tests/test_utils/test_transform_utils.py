@@ -1,6 +1,5 @@
 import random
 import pytest
-import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
@@ -11,7 +10,6 @@ from cytominer_eval.utils.transform_utils import (
     convert_pandas_dtypes,
     assert_pandas_dtypes,
     set_pair_ids,
-    assert_melt,
     check_replicate_groups,
 )
 from cytominer_eval.utils.availability_utils import get_available_eval_metrics
@@ -42,7 +40,7 @@ def test_get_upper_matrix():
 
 def test_convert_pandas_dtypes():
     with pytest.raises(ValueError) as ve:
-        output = convert_pandas_dtypes(data_df)
+        convert_pandas_dtypes(data_df)
     assert "check input features" in str(ve.value)
 
     data_string_type_df = data_df.astype(str)
@@ -54,11 +52,11 @@ def test_convert_pandas_dtypes():
 
 def test_assert_pandas_dtypes():
     with pytest.raises(ValueError) as ve:
-        output = assert_pandas_dtypes(data_df)
+        assert_pandas_dtypes(data_df)
     assert "check input features" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
-        output = assert_pandas_dtypes(data_df, col_fix="not supported")
+        assert_pandas_dtypes(data_df, col_fix="not supported")
     assert "Only str and float are supported" in str(ve.value)
 
     output_df = assert_pandas_dtypes(data_df, col_fix=str)
@@ -94,7 +92,7 @@ def test_check_replicate_groups():
                 eval_metric=operation, replicate_groups=replicate_group_dict
             )
             with pytest.raises(AssertionError) as ae:
-                output = check_replicate_groups(
+                check_replicate_groups(
                     eval_metric=operation, replicate_groups=replicate_groups
                 )
             assert "For grit, replicate_groups must be a dict" in str(ae.value)
@@ -103,7 +101,7 @@ def test_check_replicate_groups():
                 eval_metric=operation, replicate_groups=replicate_groups[0]
             )
             with pytest.raises(AssertionError) as ae:
-                output = check_replicate_groups(
+                check_replicate_groups(
                     eval_metric=operation, replicate_groups=replicate_groups
                 )
             assert "For mp_value, replicate_groups must be a single string." in str(
@@ -114,7 +112,7 @@ def test_check_replicate_groups():
                 eval_metric=operation, replicate_groups=replicate_groups
             )
             with pytest.raises(AssertionError) as ae:
-                output = check_replicate_groups(
+                check_replicate_groups(
                     eval_metric=operation, replicate_groups=replicate_group_dict
                 )
             assert "Replicate groups must be a list for the {op} operation".format(
@@ -123,7 +121,5 @@ def test_check_replicate_groups():
 
     with pytest.raises(AssertionError) as ae:
         wrong_group_dict = {"MISSING": "nothing here", "MISSING_TOO": "nothing"}
-        output = check_replicate_groups(
-            eval_metric="grit", replicate_groups=wrong_group_dict
-        )
+        check_replicate_groups(eval_metric="grit", replicate_groups=wrong_group_dict)
     assert "replicate_groups for grit not formed properly." in str(ae.value)

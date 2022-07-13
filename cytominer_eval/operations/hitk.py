@@ -1,5 +1,4 @@
-"""Function to calculate the hits at k list and scores for a given similarity matrix.
-"""
+"""Function to calculate the hits at k list and scores for a given similarity matrix."""
 import pandas as pd
 from typing import List, Union
 
@@ -82,7 +81,7 @@ def hitk(
 
     # make a list of the ranks of correct connection (hits), ie where the group_replicate is true
     hits_list = similarity_melted_with_rank[
-        similarity_melted_with_rank["group_replicate"] == True
+        similarity_melted_with_rank["group_replicate"]
     ]["rank"].tolist()
 
     # calculate the scores at each percentage

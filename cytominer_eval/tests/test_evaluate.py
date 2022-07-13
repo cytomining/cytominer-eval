@@ -1,7 +1,7 @@
+"""Test evaluate method of cytominer-eval."""
 import os
 import pytest
 import pathlib
-import tempfile
 import numpy as np
 import pandas as pd
 from math import isclose

@@ -1,11 +1,7 @@
 import os
-import random
 import pytest
 import pathlib
-import tempfile
-import numpy as np
 import pandas as pd
-import pandas.api.types as ptypes
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.utils.operation_utils import assign_replicates
@@ -55,7 +51,7 @@ def test_assert_melt():
 
         for dummy_metric in dummy_metrics:
             with pytest.raises(AssertionError) as ve:
-                output = assert_melt(result, eval_metric=dummy_metric)
+                assert_melt(result, eval_metric=dummy_metric)
             assert (
                 "Stop! The eval_metric provided in 'metric_melt()' is incorrect!"
                 in str(ve.value)

@@ -2,8 +2,6 @@
 
 The primary entrypoint into quickly evaluating profile quality.
 """
-import warnings
-import numpy as np
 import pandas as pd
 from typing import List, Union
 

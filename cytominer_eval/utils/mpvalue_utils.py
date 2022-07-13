@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
-from typing import List, Union
+from typing import Union
 
 from sklearn.decomposition import PCA
 from sklearn.covariance import EmpiricalCovariance
-
-from cytominer_eval.utils.transform_utils import set_pair_ids
 
 
 class MahalanobisEstimator:

@@ -1,8 +1,5 @@
-"""
-Functions to calculate precision and recall at a given k
-"""
+"""Functions to calculate precision and recall at a given k."""
 
-import numpy as np
 import pandas as pd
 from typing import List, Union
 
