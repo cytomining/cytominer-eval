@@ -106,8 +106,7 @@ def test_hitk_list():
 
 
 def test_number_of_hits():
-    """Calculates the number of indexes based off the MOA value count in the original df
-    """
+    """Calculates the number of indexes based off the MOA value count in the original df"""
     s = sum([n * (n - 1) for n in df["Metadata_moa"].value_counts()])
     assert s == len(index_list)
 

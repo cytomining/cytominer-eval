@@ -1,12 +1,10 @@
-"""Function to calculate the enrichment score for a given similarity matrix.
-"""
+"""Function to calculate the enrichment score for a given similarity matrix."""
 import numpy as np
 import pandas as pd
 from typing import List, Union
 import scipy
 
 from cytominer_eval.utils.operation_utils import assign_replicates
-from cytominer_eval.utils.transform_utils import set_pair_ids, assert_melt
 
 
 def enrichment(

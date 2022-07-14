@@ -1,10 +1,7 @@
 import random
-import pytest
-import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
-import pandas.api.types as ptypes
 
 from cytominer_eval.utils.grit_utils import set_grit_column_info
 

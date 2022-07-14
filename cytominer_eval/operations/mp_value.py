@@ -12,7 +12,6 @@ References
    doi: 10.1177/1087057112469257
 """
 
-import numpy as np
 import pandas as pd
 from typing import List
 

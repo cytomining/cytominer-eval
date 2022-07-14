@@ -1,13 +1,9 @@
 import os
-import random
 import pytest
 import pathlib
-import tempfile
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-
-from sklearn.preprocessing import StandardScaler
 
 from cytominer_eval.operations import grit
 from cytominer_eval.transform import metric_melt
@@ -186,7 +182,7 @@ def test_grit_summary_metric():
     )
 
     with pytest.raises(ValueError) as ve:
-        output = grit(
+        grit(
             similarity_melted_df=similarity_melted_df,
             control_perts=control_perts,
             profile_col=profile_col,

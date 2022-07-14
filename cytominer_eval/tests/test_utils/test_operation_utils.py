@@ -151,15 +151,16 @@ def test_calculate_precision_recall():
 
 def test_compare_distributions():
     # Define two distributions using a specific compound as an example
-    compound = "BRD-K07857022-002-01-1"
-    profile_id = "Metadata_profile_378"
+
+    compound = {"compound": "BRD-K07857022-002-01-1"}
+    profile_id = {"profile_id": "Metadata_profile_378"}
 
     target_group = similarity_melted_full_df.query(
-        "Metadata_profile_id_pair_a == @profile_id"
+        "Metadata_profile_id_pair_a == @profile_id", local_dict=profile_id
     )
 
     replicate_group_values = target_group.query(
-        "Metadata_broad_sample_pair_b == @compound"
+        "Metadata_broad_sample_pair_b == @compound", local_dict=compound
     ).similarity_metric.values.reshape(-1, 1)
 
     control_group_values = target_group.query(
@@ -193,7 +194,7 @@ def test_compare_distributions():
                 replicate_group_col="Metadata_broad_sample",
                 replicate_summary_method=summary_method,
             )
-            .query("perturbation == @profile_id")
+            .query("perturbation == @profile_id", local_dict=profile_id)
             .grit.values[0]
         )
 

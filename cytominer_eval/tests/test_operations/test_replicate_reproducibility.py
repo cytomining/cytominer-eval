@@ -5,7 +5,6 @@ import pathlib
 import tempfile
 import numpy as np
 import pandas as pd
-import pandas.api.types as ptypes
 
 from cytominer_eval.transform import metric_melt
 from cytominer_eval.operations import replicate_reproducibility
@@ -58,7 +57,7 @@ def test_replicate_reproducibility():
 def test_replicate_reproducibility_uniquerows():
     with pytest.raises(AssertionError) as err:
         replicate_groups = ["Metadata_pert_well"]
-        output = replicate_reproducibility(
+        replicate_reproducibility(
             similarity_melted_df=similarity_melted_df,
             replicate_groups=replicate_groups,
             quantile_over_null=0.95,

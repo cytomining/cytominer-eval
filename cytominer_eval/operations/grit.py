@@ -4,7 +4,6 @@
   with respect to:
 - Similarity to control perturbations
 """
-import numpy as np
 import pandas as pd
 from typing import List
 

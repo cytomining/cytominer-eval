@@ -2,16 +2,13 @@ import os
 import random
 import pytest
 import pathlib
-import tempfile
 import numpy as np
 import pandas as pd
-import pandas.api.types as ptypes
 
 from cytominer_eval.transform.transform import get_pairwise_metric, process_melt
 from cytominer_eval.transform import metric_melt
 
 random.seed(123)
-tmpdir = tempfile.gettempdir()
 
 example_file = "SQ00015054_normalized_feature_select.csv.gz"
 example_file = pathlib.Path(
@@ -40,11 +37,11 @@ pairwise_metric_df = get_pairwise_metric(feature_df, similarity_metric="pearson"
 
 def test_get_pairwise_metric():
     with pytest.raises(ValueError) as ve:
-        output = get_pairwise_metric(df, similarity_metric="pearson")
+        get_pairwise_metric(df, similarity_metric="pearson")
     assert "check input features" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
-        output = get_pairwise_metric(feature_df, similarity_metric="not supported")
+        get_pairwise_metric(feature_df, similarity_metric="not supported")
     assert "not supported not supported" in str(ve.value)
 
     result_df = get_pairwise_metric(feature_df, similarity_metric="pearson")
@@ -56,7 +53,7 @@ def test_get_pairwise_metric():
 
 def test_process_melt():
     with pytest.raises(AssertionError) as ve:
-        output = process_melt(df=feature_df, meta_df=meta_df)
+        process_melt(df=feature_df, meta_df=meta_df)
     assert "Matrix must be symmetrical" in str(ve.value)
 
     melted_df = process_melt(df=pairwise_metric_df, meta_df=meta_df)
@@ -82,7 +79,7 @@ def test_metric_melt():
     assert result_df.shape[0] == 73536
 
     with pytest.raises(AssertionError) as ve:
-        output = metric_melt(
+        metric_melt(
             df,
             features,
             meta_features,
@@ -92,13 +89,13 @@ def test_metric_melt():
     assert "MISSING not supported. Select one of" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
-        output = metric_melt(
+        metric_melt(
             df, features + ["NOT SUPPORTED"], meta_features, similarity_metric="pearson"
         )
     assert "Profile feature not found" in str(ve.value)
 
     with pytest.raises(AssertionError) as ve:
-        output = metric_melt(
+        metric_melt(
             df, features, meta_features + ["NOT SUPPORTED"], similarity_metric="pearson"
         )
     assert "Metadata feature not found" in str(ve.value)
